@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Details | CodeCraft Studio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            --gradient-secondary: linear-gradient(135deg, #f59e0b 0%, #ec4899 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.6;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--gray-900);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--gradient-primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--gray-600);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+        }
+
+        .nav-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-top: 100px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Back Button */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-600);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            transition: color 0.3s;
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+        }
+
+        /* Project Header */
+        .project-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .project-category {
+            display: inline-block;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .project-title {
+            font-size: 2.5rem;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .project-description {
+            font-size: 1.1rem;
+            color: var(--gray-600);
+            line-height: 1.8;
+        }
+
+        /* Project Image */
+        .project-image {
+            width: 100%;
+            height: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .project-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Project Info Grid */
+        .project-info-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        /* Project Details */
+        .project-details {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .details-section {
+            margin-bottom: 2rem;
+        }
+
+        .details-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .details-title {
+            font-size: 1.25rem;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .tech-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .tech-tag {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-100);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li i {
+            color: var(--success);
+        }
+
+        /* Project Sidebar */
+        .project-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-card-title {
+            font-size: 1rem;
+            color: var(--gray-500);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .info-card-value {
+            font-size: 1.5rem;
+            color: var(--gray-900);
+            font-weight: 700;
+        }
+
+        .info-card-value.highlight {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* CTA Card */
+        .cta-card {
+            background: var(--gradient-primary);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .cta-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .cta-card p {
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background: white;
+            color: var(--primary);
+            padding: 0.85rem 2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s;
+        }
+
+        .cta-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 60vh;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Not Found */
+        .not-found {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .not-found h1 {
+            font-size: 4rem;
+            color: var(--gray-300);
+            margin-bottom: 1rem;
+        }
+
+        .not-found p {
+            color: var(--gray-500);
+            margin-bottom: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .project-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .project-title {
+                font-size: 1.75rem;
+            }
+
+            .project-image {
+                height: 250px;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">CC</div>
+                <span>CodeCraft Studio</span>
+            </a>
+            <div class="nav-menu">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/services" class="nav-link">Services</a>
+                <a href="/portfolio" class="nav-link active">Portfolio</a>
+                <a href="/process" class="nav-link">Process</a>
+                <a href="/contact" class="nav-link">Contact</a>
+            </div>
+            <a href="/contact" class="nav-btn">Get Started</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <a href="/portfolio" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Portfolio
+            </a>
+
+            <div id="projectContent">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Project data
+        const projects = {
+            1: {
+                id: 1,
+                title: "Online Shopping Platform",
+                category: "E-Commerce",
+                description: "A full-featured e-commerce platform with secure payment processing, inventory management, and user-friendly interface. This platform handles thousands of products with real-time inventory tracking and seamless checkout experience.",
+                image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200",
+                technologies: ["React", "Node.js", "MongoDB", "Stripe", "Redux"],
+                features: [
+                    "Secure Payment Processing",
+                    "Inventory Management",
+                    "User Authentication",
+                    "Order Tracking",
+                    "Product Reviews",
+                    "Wishlist Functionality",
+                    "Mobile Responsive"
+                ],
+                client: "RetailCo Inc.",
+                timeline: "3 Months",
+                budget: "$15,000"
+            },
+            2: {
+                id: 2,
+                title: "Business Portfolio",
+                category: "Web Development",
+                description: "Professional portfolio website with modern design, lead generation capabilities, and SEO optimization. Showcases business services with engaging visuals and clear call-to-actions.",
+                image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200",
+                technologies: ["HTML5", "CSS3", "JavaScript", "PHP", "MySQL"],
+                features: [
+                    "Modern Responsive Design",
+                    "Lead Generation Forms",
+                    "SEO Optimization",
+                    "Contact Management",
+                    "Blog Integration",
+                    "Analytics Dashboard"
+                ],
+                client: "TechStart Solutions",
+                timeline: "6 Weeks",
+                budget: "$3,500"
+            },
+            3: {
+                id: 3,
+                title: "Fitness Tracking App",
+                category: "Mobile App",
+                description: "Cross-platform mobile application for tracking fitness goals, workouts, nutrition, and health metrics. Features social sharing, progress charts, and personalized workout plans.",
+                image: "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=1200",
+                technologies: ["React Native", "Firebase", "Charts.js", "Health API"],
+                features: [
+                    "Workout Tracking",
+                    "Progress Analytics",
+                    "Social Sharing",
+                    "Goal Setting",
+                    "Nutrition Logging",
+                    "Wearable Integration"
+                ],
+                client: "FitLife Health",
+                timeline: "4 Months",
+                budget: "$25,000"
+            },
+            4: {
+                id: 4,
+                title: "Analytics Dashboard",
+                category: "Web Development",
+                description: "Real-time analytics dashboard with data visualization, custom reports, and interactive charts. Provides deep insights into business metrics with drill-down capabilities.",
+                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200",
+                technologies: ["Vue.js", "D3.js", "Python", "PostgreSQL", "Docker"],
+                features: [
+                    "Real-time Data Updates",
+                    "Custom Reports",
+                    "Interactive Charts",
+                    "Export to PDF/Excel",
+                    "Role-based Access",
+                    "API Integrations"
+                ],
+                client: "DataDriven Corp",
+                timeline: "2.5 Months",
+                budget: "$18,000"
+            },
+            5: {
+                id: 5,
+                title: "Food Delivery App",
+                category: "E-Commerce",
+                description: "Full-featured food delivery platform with real-time order tracking, restaurant management, driver allocation, and secure payments. Handles thousands of orders daily.",
+                image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1200",
+                technologies: ["React", "Express", "MongoDB", "Socket.io", "Google Maps API"],
+                features: [
+                    "Real-time Tracking",
+                    "Restaurant Dashboard",
+                    "Driver Management",
+                    "Secure Payments",
+                    "Promo Codes",
+                    "Order History",
+                    "Push Notifications"
+                ],
+                client: "FoodExpress",
+                timeline: "5 Months",
+                budget: "$30,000"
+            },
+            6: {
+                id: 6,
+                title: "E-Learning Platform",
+                category: "UI/UX Design",
+                description: "Interactive e-learning platform with video courses, progress tracking, quizzes, certificates, and instructor dashboards. Full-featured LMS with modern UI/UX design.",
+                image: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=1200",
+                technologies: ["Figma", "React", "AWS S3", "CloudFront", "MongoDB"],
+                features: [
+                    "Video Streaming",
+                    "Progress Tracking",
+                    "Quiz System",
+                    "Certificates",
+                    "Instructor Dashboard",
+                    "Discussion Forums",
+                    "Mobile App"
+                ],
+                client: "EduLearn Academy",
+                timeline: "4 Months",
+                budget: "$22,000"
+            }
+        };
+
+        // Get project ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = parseInt(urlParams.get('id'));
+
+        // Render project
+        function renderProject(project) {
+            const content = document.getElementById('projectContent');
+            
+            const techTags = project.technologies.map(tech => 
+                `<span class="tech-tag">${tech}</span>`
+            ).join('');
+
+            const features = project.features.map(feature => 
+                `<li><i class="fas fa-check-circle"></i> ${feature}</li>`
+            ).join('');
+
+            content.innerHTML = `
+                <div class="project-header">
+                    <span class="project-category">${project.category}</span>
+                    <h1 class="project-title">${project.title}</h1>
+                    <p class="project-description">${project.description}</p>
+                </div>
+
+                <div class="project-image">
+                    <img src="${project.image}" alt="${project.title}">
+                </div>
+
+                <div class="project-info-grid">
+                    <div class="project-details">
+                        <div class="details-section">
+                            <h3 class="details-title">Technologies Used</h3>
+                            <div class="tech-list">
+                                ${techTags}
+                            </div>
+                        </div>
+
+                        <div class="details-section">
+                            <h3 class="details-title">Key Features</h3>
+                            <ul class="feature-list">
+                                ${features}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="project-sidebar">
+                        <div class="info-card">
+                            <div class="info-card-title">Client</div>
+                            <div class="info-card-value">${project.client}</div>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="info-card-title">Timeline</div>
+                            <div class="info-card-value">${project.timeline}</div>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="info-card-title">Budget</div>
+                            <div class="info-card-value highlight">${project.budget}</div>
+                        </div>
+
+                        <div class="cta-card">
+                            <h3>Like This Project?</h3>
+                            <p>Let's create something amazing for your business!</p>
+                            <a href="/contact" class="cta-btn">Start Your Project</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Check if project exists
+        if (projectId && projects[projectId]) {
+            renderProject(projects[projectId]);
+        } else {
+            document.getElementById('projectContent').innerHTML = `
+                <div class="not-found">
+                    <h1>404</h1>
+                    <p>Project not found</p>
+                    <a href="/portfolio" class="nav-btn">Back to Portfolio</a>
+                </div>
+            `;
+        }
+    </script>
+</body>
+
+</html>

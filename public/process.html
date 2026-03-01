@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Process - CodeCraft Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&lt;/&gt;</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .logo-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: #6366f1;
+        }
+        
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #6366f1;
+            border-radius: 2px;
+        }
+        
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* User Dropdown */
+        .user-dropdown { position: relative; display: inline-block; }
+        .user-dropdown-btn { display: flex; align-items: center; gap: 8px; padding: 0.5rem 1rem; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s; border: none; font-size: 0.95rem; }
+        .user-dropdown-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3); }
+        .user-dropdown-content { display: none; position: absolute; right: 0; top: 100%; margin-top: 10px; background: white; min-width: 200px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); z-index: 1001; overflow: hidden; }
+        .user-dropdown-content.show { display: block; animation: fadeIn 0.2s ease; }
+        .user-dropdown-header { padding: 15px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; }
+        .user-dropdown-header .user-name { font-weight: 700; font-size: 1rem; }
+        .user-dropdown-header .user-email { font-size: 0.8rem; opacity: 0.9; }
+        .user-dropdown-item { padding: 12px 15px; display: flex; align-items: center; gap: 10px; color: #64748b; text-decoration: none; transition: all 0.2s; cursor: pointer; border: none; background: none; width: 100%; font-size: 0.95rem; font-family: inherit; }
+        .user-dropdown-item:hover { background: #f1f5f9; color: #6366f1; }
+        .user-dropdown-item.logout { color: #ef4444; border-top: 1px solid #e2e8f0; }
+        .user-dropdown-item.logout:hover { background: #fef2f2; color: #dc2626; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-ghost {
+            background: transparent;
+            color: #1e293b;
+        }
+        
+        .btn-ghost:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: #6366f1;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+        
+        /* Page Header */
+        .page-header {
+            padding: 150px 5% 80px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.2) 0%, transparent 50%);
+        }
+        
+        .page-header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        .page-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        /* Section Styles */
+        .section {
+            padding: 80px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-label {
+            display: inline-block;
+            padding: 0.5rem 1.2rem;
+            background: rgba(99, 102, 241, 0.1);
+            color: #6366f1;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+        
+        .section-description {
+            font-size: 1.1rem;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #6366f1, #ec4899);
+            border-radius: 2px;
+        }
+        
+        .timeline-item {
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 50%;
+            position: relative;
+            margin-bottom: 3rem;
+        }
+        
+        .timeline-item:nth-child(even) {
+            justify-content: flex-start;
+            padding-right: 0;
+            padding-left: 50%;
+        }
+        
+        .timeline-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .timeline-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .timeline-number {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+        
+        .timeline-item:nth-child(even) .timeline-number {
+            right: auto;
+            left: -15px;
+        }
+        
+        .timeline-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6366f1;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .timeline-content h3 {
+            font-size: 1.4rem;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .timeline-content p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+        
+        .timeline-features {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f1f5f9;
+        }
+        
+        .timeline-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .timeline-feature i {
+            color: #6366f1;
+            font-size: 0.7rem;
+        }
+        
+        /* Methodology */
+        .methodology-section {
+            padding: 80px 5%;
+            background: white;
+        }
+        
+        .methodology-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .methodology-card {
+            padding: 2.5rem;
+            background: #f8fafc;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .methodology-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .methodology-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: #6366f1;
+        }
+        
+        .methodology-card h3 {
+            font-size: 1.3rem;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+        
+        .methodology-card p {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 80px 5%;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .btn-white {
+            background: white;
+            color: #6366f1;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+            position: relative;
+            z-index: 2;
+            cursor: pointer;
+        }
+        
+        .btn-white:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Footer */
+        .footer {
+            background: #0f172a;
+            color: white;
+            padding: 3rem 5%;
+            text-align: center;
+        }
+        
+        .footer p {
+            opacity: 0.7;
+        }
+        
+        /* Animations */
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+        .stagger-5 { animation-delay: 0.5s; }
+        .stagger-6 { animation-delay: 0.6s; }
+        
+        @media (max-width: 1024px) {
+            .methodology-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 20px;
+            }
+            .timeline-item,
+            .timeline-item:nth-child(even) {
+                padding-left: 60px;
+                padding-right: 0;
+                justify-content: flex-start;
+            }
+            .timeline-content {
+                width: 100%;
+            }
+            .timeline-number,
+            .timeline-item:nth-child(even) .timeline-number {
+                left: -5px;
+                right: auto;
+            }
+            .nav-menu {
+                display: none;
+            }
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">CC</div>
+                <span class="logo-text">CodeCraft Studio</span>
+            </a>
+            <div class="nav-menu">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/services" class="nav-link">Services</a>
+                <a href="/portfolio" class="nav-link">Portfolio</a>
+                <a href="/process" class="nav-link active">Process</a>
+                <a href="/pricing" class="nav-link">Pricing</a>
+                <a href="/contact" class="nav-link">Contact</a>
+            </div>
+            <div class="nav-actions" id="navActions">
+                <a href="/admin-login" class="btn btn-ghost">Admin Login</a>
+                <a href="/login" class="btn btn-primary">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>Our Process</h1>
+        <p>A proven methodology to deliver exceptional results on every project</p>
+    </section>
+
+    <!-- Process Timeline -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-label">How We Work</span>
+            <h2 class="section-title">Our Development Process</h2>
+            <p class="section-description">
+                Our structured approach ensures transparency, quality, and timely delivery.
+            </p>
+        </div>
+
+        <div class="timeline">
+            <!-- Step 1 -->
+            <div class="timeline-item">
+                <div class="timeline-content animate-fade-in-up stagger-1">
+                    <div class="timeline-number">1</div>
+                    <div class="timeline-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Discovery & Requirement</h3>
+                    <p>We begin by understanding your business goals, target audience, and project requirements through detailed consultations.</p>
+                    <div class="timeline-features">
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Project scope definition</span>
+                        </div>
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Business goal analysis</span>
+                        </div>
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Technical requirements</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="timeline-item">
+                <div class="timeline-content animate-fade-in-up stagger-2">
+                    <div class="timeline-number">2</div>
+                    <div class="timeline-icon">
+                        <i class="fas fa-pencil-ruler"></i>
+                    </div>
+                    <h3>Planning & Design</h3>
+                    <p>Our team creates detailed project plans and designs that align with your vision and objectives.</p>
+                    <div class="timeline-features">
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Project roadmap</span>
+                        </div>
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>UI/UX wireframes</span>
+                        </div>
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Technical architecture</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="timeline-item">
+                <div class="timeline-content animate-fade-in-up stagger-3">
+                    <div class="timeline-number">3</div>
+                    <div class="timeline-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Development</h3>
+                    <p>Our expert developers bring your project to life using cutting-edge technologies and best practices.</p>
+                    <div class="timeline-features">
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Agile development</span>
+                        </div>
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Regular updates</span>
+                        </div>
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Code reviews</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="timeline-item">
+                <div class="timeline-content animate-fade-in-up stagger-4">
+                    <div class="timeline-number">4</div>
+                    <div class="timeline-icon">
+                        <i class="fas fa-vial"></i>
+                    </div>
+                    <h3>Testing & QA</h3>
+                    <p>Rigorous testing ensures your project meets the highest quality standards before launch.</p>
+                    <div class="timeline-features">
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Functional testing</span>
+                        </div>
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Performance testing</span>
+                        </div>
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Security testing</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="timeline-item">
+                <div class="timeline-content animate-fade-in-up stagger-5">
+                    <div class="timeline-number">5</div>
+                    <div class="timeline-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Deployment & Launch</h3>
+                    <p>We deploy your project to production and ensure a smooth launch with zero downtime.</p>
+                    <div class="timeline-features">
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Production deployment</span>
+                        </div>
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Performance optimization</span>
+                        </div>
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Launch monitoring</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6 -->
+            <div class="timeline-item">
+                <div class="timeline-content animate-fade-in-up stagger-6">
+                    <div class="timeline-number">6</div>
+                    <div class="timeline-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Support & Maintenance</h3>
+                    <p>Our relationship doesn't end at launch. We provide ongoing support to keep your project running smoothly.</p>
+                    <div class="timeline-features">
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>24/7 monitoring</span>
+                        </div>
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Regular updates</span>
+                        </div>
+                        <div class="timeline-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Feature enhancements</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Methodology Section -->
+    <section class="methodology-section">
+        <div class="section-header">
+            <span class="section-label">Our Approach</span>
+            <h2 class="section-title">Methodology</h2>
+            <p class="section-description">
+                We follow proven methodologies to ensure project success.
+            </p>
+        </div>
+        
+        <div class="methodology-grid">
+            <div class="methodology-card animate-fade-in-up stagger-1">
+                <div class="methodology-icon">
+                    <i class="fas fa-sync"></i>
+                </div>
+                <h3>Agile Development</h3>
+                <p>We follow agile methodologies to deliver increments regularly, ensuring continuous improvement and flexibility.</p>
+            </div>
+            
+            <div class="methodology-card animate-fade-in-up stagger-2">
+                <div class="methodology-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Collaborative Approach</h3>
+                <p>We maintain open communication with our clients, involving them in key decisions and providing regular updates.</p>
+            </div>
+            
+            <div class="methodology-card animate-fade-in-up stagger-3">
+                <div class="methodology-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Results-Driven</h3>
+                <p>Every decision we make is guided by measurable outcomes. We focus on delivering solutions that drive real business value.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <h2>Ready to Start Your Project?</h2>
+        <p>Let's discuss your project and create a roadmap to bring your vision to life.</p>
+        <a href="/contact" class="btn-white" onclick="window.location.href='/contact'; return false;">Get Started</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 CodeCraft Studio. All rights reserved.</p>
+    </footer>
+    
+    <script>
+    // User Dropdown Functionality
+    async function checkUserSession() {
+        try {
+            const response = await fetch('/api/user');
+            const data = await response.json();
+            const navActions = document.getElementById('navActions');
+            
+            if (data.loggedIn && navActions) {
+                const loginBtn = navActions.querySelector('.btn-ghost');
+                if (loginBtn) loginBtn.style.display = 'none';
+                
+                navActions.innerHTML += `
+                    <div class="user-dropdown">
+                        <button class="user-dropdown-btn" onclick="toggleDropdown(event)">
+                            <i class="fas fa-user-circle"></i>
+                            <span>${data.user.first_name}</span>
+                            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+                        </button>
+                        <div class="user-dropdown-content" id="userDropdown">
+                            <div class="user-dropdown-header">
+                                <div class="user-name">${data.user.first_name} ${data.user.last_name || ''}</div>
+                                <div class="user-email">${data.user.email}</div>
+                            </div>
+                            <a href="/profile" class="user-dropdown-item">
+                                <i class="fas fa-user"></i> My Profile
+                            </a>
+                            <a href="/dashboard" class="user-dropdown-item">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                            <button onclick="logout()" class="user-dropdown-item logout">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('Error checking user session:', error);
+        }
+    }
+    
+    function toggleDropdown(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('userDropdown');
+        if (dropdown) {
+            dropdown.classList.toggle('show');
+        }
+    }
+    
+    async function logout() {
+        try {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/';
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+    }
+    
+    document.addEventListener('click', function(e) {
+        const dropdown = document.querySelector('.user-dropdown');
+        if (dropdown && !dropdown.contains(e.target)) {
+            const dropdownContent = dropdown.querySelector('.user-dropdown-content');
+            if (dropdownContent) dropdownContent.classList.remove('show');
+        }
+    });
+    
+    checkUserSession();
+    </script>
+</body>
+</html>

@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management - CodeCraft Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+        
+        * { font-family: 'Outfit', sans-serif; }
+        
+        body {
+            background: #0f0f1a;
+            overflow-x: hidden;
+        }
+        
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+            animation: bgPulse 15s ease-in-out infinite;
+        }
+        
+        @keyframes bgPulse {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(2%, 2%); }
+        }
+        
+        .sidebar {
+            position: fixed !important;
+            width: 280px !important;
+            background: rgba(20, 20, 35, 0.8) !important;
+            backdrop-filter: blur(20px) !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+            height: 100vh !important;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-logo {
+            padding: 25px !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .sidebar-logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 50%, #f59e0b 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 1.3rem;
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4);
+        }
+        
+        .sidebar-logo-text { color: white; font-weight: 700; font-size: 1.2rem; }
+        .sidebar-logo-sub { color: rgba(255, 255, 255, 0.5); font-size: 0.75rem; }
+        
+        .sidebar-nav { padding: 20px 15px; flex: 1; overflow-y: auto; }
+        
+        .sidebar-link {
+            display: flex !important;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            color: rgba(255, 255, 255, 0.6) !important;
+            text-decoration: none;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sidebar-link:hover {
+            background: rgba(99, 102, 241, 0.2) !important;
+            color: white !important;
+            transform: translateX(5px);
+        }
+        
+        .sidebar-link.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(139, 92, 246, 0.3)) !important;
+            color: white !important;
+            border-left: 3px solid #6366f1;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .sidebar-link i { font-size: 1.1rem; width: 24px; }
+        
+        .sidebar-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            margin: 15px 0;
+        }
+        
+        .sidebar-user {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .sidebar-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .sidebar-user-name { color: white; font-weight: 600; font-size: 0.95rem; }
+        .sidebar-user-role { color: rgba(255, 255, 255, 0.5); font-size: 0.75rem; }
+        
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .sidebar-footer p {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.7rem;
+            margin: 0;
+        }
+        
+        .main-content {
+            margin-left: 280px !important;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+            padding: 30px;
+        }
+        
+        .header {
+            background: rgba(20, 20, 35, 0.6) !important;
+            backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 20px !important;
+            padding: 25px 30px !important;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header-title h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            margin: 0;
+        }
+        
+        .header-title p { color: rgba(255, 255, 255, 0.5); margin: 5px 0 0 0; font-size: 0.9rem; }
+        
+        .btn-primary-gradient {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+            font-size: 1rem;
+        }
+        
+        .btn-primary-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6);
+        }
+        
+        .content-card {
+            background: rgba(20, 20, 35, 0.6) !important;
+            backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 20px !important;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .table-container { overflow-x: auto; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 18px 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(30, 30, 50, 0.8);
+        }
+        
+        th {
+            background: rgba(99, 102, 241, 0.1);
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        td { color: rgba(255, 255, 255, 0.7); font-size: 0.95rem; }
+        
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        tr:last-child td { border-bottom: none; }
+        
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .badge-warning { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+        
+        .btn-edit {
+            background: rgba(99, 102, 241, 0.2);
+            color: #6366f1;
+        }
+        
+        .btn-edit:hover {
+            background: rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+        }
+        
+        .modal-content {
+            background: rgba(30, 30, 50, 0.95);
+            backdrop-filter: blur(20px);
+            margin: 3% auto;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 650px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            color: white;
+        }
+        
+        .modal-close {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .modal-close:hover {
+            background: rgba(239, 68, 68, 0.4);
+            transform: rotate(90deg);
+        }
+        
+        .modal-body { padding: 30px; }
+        
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-group { margin-bottom: 0; }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .form-control::placeholder { color: rgba(255, 255, 255, 0.3); }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(20, 20, 35, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 18px 28px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            display: none;
+            z-index: 9999;
+            animation: slideInRight 0.4s ease-out;
+            color: white;
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+        ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.5); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.8); }
+    </style>
+</head>
+
+<body>
+    <div class="bg-animation"></div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">CC</div>
+            <div>
+                <div class="sidebar-logo-text">CodeCraft</div>
+                <div class="sidebar-logo-sub">Admin Panel</div>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="/admin" class="sidebar-link"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+            <a href="/admin/messages" class="sidebar-link"><i class="fas fa-envelope"></i><span>Messages</span><span class="msg-badge" id="msgBadge" style="display:none; margin-left: auto; background: #ff6b6b; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem;">0</span></a>
+            <a href="/admin/payments" class="sidebar-link"><i class="fas fa-credit-card"></i><span>Payments</span></a>
+            <a href="/admin/employees" class="sidebar-link active"><i class="fas fa-users"></i><span>Employees</span></a>
+            <a href="/admin/clients" class="sidebar-link"><i class="fas fa-building"></i><span>Clients</span></a>
+            <a href="/admin/orders" class="sidebar-link"><i class="fas fa-clipboard-list"></i><span>Orders</span></a>
+            <a href="/admin/services" class="sidebar-link"><i class="fas fa-tools"></i><span>Services</span></a>
+            <a href="/admin/settings" class="sidebar-link"><i class="fas fa-cog"></i><span>Settings</span></a>
+            <div class="sidebar-divider"></div>
+            <a href="/" class="sidebar-link" target="_blank"><i class="fas fa-globe"></i><span>View Website</span></a>
+            <button onclick="logout()" class="sidebar-link" style="width: 100%; border: none;"><i class="fas fa-sign-out-alt" style="color: #ff6b6b;"></i><span style="color: #ff6b6b;">Logout</span></button>
+        </nav>
+        
+        <div class="sidebar-user">
+            <div class="sidebar-avatar" id="adminAvatar">A</div>
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-name" id="adminName">Admin</div>
+                <div class="sidebar-user-role">Administrator</div>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <p>Developed by M. Ahsan Shah</p>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <header class="header">
+            <div class="header-title">
+                <h1>Employee Management</h1>
+                <p>Manage your team members with full details</p>
+            </div>
+            <button class="btn-primary-gradient" onclick="openModal()">
+                <i class="fas fa-plus"></i>
+                Add Employee
+            </button>
+        </header>
+
+        <div class="content-card">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Employee Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>CNIC</th>
+                            <th>Designation</th>
+                            <th>Department</th>
+                            <th>Salary</th>
+                            <th>Join Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeeTable">
+                        <tr>
+                            <td colspan="11">
+                                <div class="empty-state">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <p>Loading employees...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="employeeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle"><i class="fas fa-user-plus"></i> Add Employee</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="employeeForm">
+                    <input type="hidden" id="employeeId">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>First Name *</label>
+                            <input type="text" id="first_name" class="form-control" placeholder="Enter Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name *</label>
+                            <input type="text" id="last_name" class="form-control" placeholder="Enter Last Name" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="email" class="form-control" placeholder="inbox@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone *</label>
+                            <input type="text" id="phone" class="form-control" placeholder="+92 300 1234567" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>CNIC *</label>
+                            <input type="text" id="cnic" class="form-control" placeholder="12345-1234567-1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Designation *</label>
+                            <input type="text" id="designation" class="form-control" placeholder="Software Engineer" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Department *</label>
+                            <input type="text" id="department" class="form-control" placeholder="IT Department" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Salary *</label>
+                            <input type="number" id="salary" class="form-control" placeholder="50000" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Joining Date *</label>
+                        <input type="date" id="joining_date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" id="address" class="form-control" placeholder="Full address">
+                    </div>
+                    <div class="form-group" id="statusGroup" style="display: none;">
+                        <label>Status</label>
+                        <select id="status" class="form-control">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="terminated">Terminated</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn-primary-gradient" onclick="saveEmployee()">
+                    <i class="fas fa-save"></i>
+                    Save Employee
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">
+        <span id="toastMsg"></span>
+    </div>
+
+    <script>
+        let employees = [];
+        let editingId = null;
+
+        document.addEventListener('DOMContentLoaded', () => { checkAuth(); loadEmployees(); loadUser(); });
+
+        async function loadUser() {
+            try {
+                const res = await fetch('/api/check-auth');
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('adminName').textContent = data.user.first_name || 'Admin';
+                    document.getElementById('adminAvatar').textContent = (data.user.first_name || 'A').charAt(0);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/check-auth');
+                const data = await res.json();
+                if (!data.success || data.user.role !== 'admin') window.location.href = '/login';
+            } catch (e) { window.location.href = '/login'; }
+        }
+
+        async function loadEmployees() {
+            try {
+                const res = await fetch('/api/employees');
+                const data = await res.json();
+                if (data.success) {
+                    employees = data.employees;
+                    renderTable();
+                }
+            } catch (e) { showToast('Error loading employees', 'error'); }
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('employeeTable');
+            if (employees.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="11"><div class="empty-state"><i class="fas fa-users"></i><p>No employees found</p></div></td></tr>`;
+                return;
+            }
+            tbody.innerHTML = employees.map(e => `
+                <tr>
+                    <td style="color: #6366f1; font-weight: 600;">#${e.id}</td>
+                    <td><strong style="color: white;">${e.first_name} ${e.last_name}</strong></td>
+                    <td>${e.email || '-'}</td>
+                    <td>${e.phone || '-'}</td>
+                    <td style="font-family: monospace;">${e.cnic || '-'}</td>
+                    <td>${e.designation || '-'}</td>
+                    <td>${e.department || '-'}</td>
+                    <td style="color: #10b981; font-weight: 600;">$${parseFloat(e.salary || 0).toLocaleString()}</td>
+                    <td>${e.joining_date || '-'}</td>
+                    <td><span class="badge ${getStatusBadge(e.status)}">${e.status || 'active'}</span></td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editEmployee(${e.id})"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-delete" onclick="deleteEmployee(${e.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatusBadge(status) {
+            if (status === 'active') return 'badge-success';
+            if (status === 'inactive') return 'badge-warning';
+            return 'badge-danger';
+        }
+
+        function openModal() {
+            editingId = null;
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-plus"></i> Add Employee';
+            document.getElementById('employeeForm').reset();
+            document.getElementById('employeeId').value = '';
+            document.getElementById('statusGroup').style.display = 'none';
+            document.getElementById('employeeModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('employeeModal').style.display = 'none';
+        }
+
+        function editEmployee(id) {
+            const emp = employees.find(e => e.id === id);
+            if (!emp) return;
+            editingId = id;
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-edit"></i> Edit Employee';
+            document.getElementById('employeeId').value = emp.id;
+            document.getElementById('first_name').value = emp.first_name || '';
+            document.getElementById('last_name').value = emp.last_name || '';
+            document.getElementById('email').value = emp.email || '';
+            document.getElementById('phone').value = emp.phone || '';
+            document.getElementById('cnic').value = emp.cnic || '';
+            document.getElementById('designation').value = emp.designation || '';
+            document.getElementById('department').value = emp.department || '';
+            document.getElementById('salary').value = emp.salary || '';
+            document.getElementById('joining_date').value = emp.joining_date || '';
+            document.getElementById('address').value = emp.address || '';
+            document.getElementById('status').value = emp.status || 'active';
+            document.getElementById('statusGroup').style.display = 'block';
+            document.getElementById('employeeModal').style.display = 'block';
+        }
+
+        async function saveEmployee() {
+            const data = {
+                first_name: document.getElementById('first_name').value,
+                last_name: document.getElementById('last_name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                cnic: document.getElementById('cnic').value,
+                designation: document.getElementById('designation').value,
+                department: document.getElementById('department').value,
+                salary: document.getElementById('salary').value,
+                joining_date: document.getElementById('joining_date').value,
+                address: document.getElementById('address').value,
+                status: document.getElementById('status').value
+            };
+
+            if (!data.first_name || !data.last_name || !data.phone || !data.cnic || !data.designation || !data.department || !data.salary || !data.joining_date) {
+                showToast('Please fill all required fields', 'error');
+                return;
+            }
+
+            try {
+                const url = editingId ? `/api/employees/${editingId}` : '/api/employees';
+                const method = editingId ? 'PUT' : 'POST';
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToast(editingId ? 'Employee updated successfully!' : 'Employee added successfully!');
+                    closeModal();
+                    loadEmployees();
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (e) { showToast('Error saving employee', 'error'); }
+        }
+
+        async function deleteEmployee(id) {
+            if (!confirm('Are you sure you want to delete this employee?')) return;
+            try {
+                const res = await fetch(`/api/employees/${id}`, { method: 'DELETE' });
+                const result = await res.json();
+                if (result.success) {
+                    showToast('Employee deleted successfully!');
+                    loadEmployees();
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (e) { showToast('Error deleting employee', 'error'); }
+        }
+
+        async function logout() {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/login';
+        }
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.style.borderLeft = type === 'error' ? '4px solid #ef4444' : '4px solid #10b981';
+            document.getElementById('toastMsg').textContent = msg;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        }
+
+        window.onclick = function(e) {
+            if (e.target.classList.contains('modal')) closeModal();
+        }
+    </script>
+</body>
+</html>

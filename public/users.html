@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - CodeCraft Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&lt;/&gt;</text></svg>">
+</head>
+
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">CC</div>
+            <span class="sidebar-logo-text">CodeCraft</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/dashboard" class="sidebar-link"><span class="sidebar-icon">📊</span><span>Dashboard</span></a>
+            <a href="/customer-services" class="sidebar-link"><span class="sidebar-icon">🎫</span><span>Services</span></a>
+            <a href="/projects" class="sidebar-link"><span class="sidebar-icon">📁</span><span>Projects</span></a>
+            <a href="/messages" class="sidebar-link"><span class="sidebar-icon">💬</span><span>Messages</span></a>
+            <div class="sidebar-divider"></div>
+            <a href="/profile" class="sidebar-link"><span class="sidebar-icon">👤</span><span>Profile</span></a>
+            <a href="/settings" class="sidebar-link"><span class="sidebar-icon">⚙️</span><span>Settings</span></a>
+            <div class="sidebar-divider"></div>
+            <a href="/users" class="sidebar-link active"><span class="sidebar-icon">👥</span><span>Users</span></a>
+            <a href="/analytics" class="sidebar-link"><span class="sidebar-icon">📈</span><span>Analytics</span></a>
+            <div class="sidebar-divider"></div>
+            <a href="/" class="sidebar-link" target="_blank"><span class="sidebar-icon">🌐</span><span>View Website</span></a>
+            <button class="sidebar-link" onclick="logout()" style="width: 100%; text-align: left; border: none; background: none; cursor: pointer;"><span class="sidebar-icon">🚪</span><span>Logout</span></button>
+        </nav>
+        <div class="sidebar-user" id="sidebarUser">
+            <div class="avatar" id="userAvatar">U</div>
+            <div><div style="font-weight: 600; font-size: 0.9rem;" id="userName">User Name</div><div style="font-size: 0.8rem; opacity: 0.7;" id="userRole">Admin</div></div>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="main-header">
+            <div class="flex items-center gap-lg">
+                <div>
+                    <h1 class="page-title">User Management</h1>
+                    <p class="page-subtitle">Manage all registered users</p>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="openModal('newUserModal')"><span>+</span> Add User</button>
+        </header>
+
+        <main class="main-content">
+            <!-- Stats -->
+            <div class="stats-grid" style="margin-bottom: var(--space-xl);">
+                <div class="stat-card"><div class="stat-icon primary">👥</div><div class="stat-value" id="totalUsers">0</div><div class="stat-label">Total Users</div></div>
+                <div class="stat-card"><div class="stat-icon success">✓</div><div class="stat-value" id="activeUsers">0</div><div class="stat-label">Active Users</div></div>
+                <div class="stat-card"><div class="stat-icon warning">⏸️</div><div class="stat-value" id="inactiveUsers">0</div><div class="stat-label">Inactive Users</div></div>
+                <div class="stat-card"><div class="stat-icon danger">🛡️</div><div class="stat-value" id="adminUsers">0</div><div class="stat-label">Admins</div></div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="card">
+                <div class="card-header flex justify-between items-center">
+                    <h3 class="card-title">All Users</h3>
+                    <span id="usersCount" class="badge badge-primary">0 Users</span>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <div class="table-container" style="box-shadow: none;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr><td colspan="8" style="text-align: center; padding: var(--space-2xl);"><div class="spinner" style="margin: 0 auto;"></div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New User Modal -->
+    <div class="modal-overlay" id="newUserModal">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title">👤 Add New User</h3><button class="modal-close" onclick="closeModal('newUserModal')">×</button></div>
+            <div class="modal-body">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+                    <div class="form-group"><label class="form-label">First Name *</label><input type="text" class="form-input" id="newFirstName" required></div>
+                    <div class="form-group"><label class="form-label">Last Name *</label><input type="text" class="form-input" id="newLastName" required></div>
+                </div>
+                <div class="form-group"><label class="form-label">Email *</label><input type="email" class="form-input" id="newEmail" required></div>
+                <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="newPhone"></div>
+                <div class="form-group"><label class="form-label">Password *</label><input type="password" class="form-input" id="newPassword" required minlength="6"></div>
+                <div class="form-group"><label class="form-label">Role *</label><select class="form-input form-select" id="newRole"><option value="user">User</option><option value="admin">Admin</option><option value="customer">Customer</option></select></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('newUserModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="createUser()">Create User</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal-overlay" id="editUserModal">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title">✏️ Edit User</h3><button class="modal-close" onclick="closeModal('editUserModal')">×</button></div>
+            <div class="modal-body">
+                <input type="hidden" id="editUserId">
+                <div class="form-group"><label class="form-label">Status</label><select class="form-input form-select" id="editStatus"><option value="active">Active</option><option value="inactive">Inactive</option><option value="suspended">Suspended</option></select></div>
+                <div class="form-group"><label class="form-label">Role</label><select class="form-input form-select" id="editRole"><option value="user">User</option><option value="admin">Admin</option><option value="customer">Customer</option></select></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('editUserModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="updateUser()">Update</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        let currentUser = null;
+        let allUsers = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            await loadUsers();
+        });
+
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/dashboard-data', { credentials: 'include' });
+                const data = await response.json();
+                if (!data.success) { window.location.href = '/login'; return; }
+                if (data.user.role !== 'admin') { window.location.href = '/dashboard'; return; }
+                currentUser = data.user;
+                document.getElementById('userAvatar').textContent = (currentUser.first_name.charAt(0) + currentUser.last_name.charAt(0)).toUpperCase();
+                document.getElementById('userName').textContent = currentUser.first_name + ' ' + currentUser.last_name;
+                document.getElementById('userRole').textContent = 'Admin';
+            } catch (error) { window.location.href = '/login'; }
+        }
+
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/users', { credentials: 'include' });
+                const data = await response.json();
+                if (data.success) {
+                    allUsers = data.users;
+                    renderUsers();
+                    updateStats();
+                }
+            } catch (error) { console.error(error); }
+        }
+
+        function renderUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            document.getElementById('usersCount').textContent = `${allUsers.length} Users`;
+            if (allUsers.length === 0) { tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: var(--space-2xl);">No users found</td></tr>'; return; }
+            const statusColors = { 'active': 'badge-success', 'inactive': 'badge-warning', 'suspended': 'badge-danger' };
+            const roleColors = { 'admin': 'badge-danger', 'user': 'badge-primary', 'customer': 'badge-info' };
+            tbody.innerHTML = allUsers.map(u => `
+                <tr>
+                    <td>#${u.id}</td>
+                    <td><strong>${u.first_name} ${u.last_name}</strong></td>
+                    <td>${u.email}</td>
+                    <td>${u.phone || '-'}</td>
+                    <td><span class="badge ${roleColors[u.role]}">${u.role}</span></td>
+                    <td><span class="badge ${statusColors[u.status]}">${u.status}</span></td>
+                    <td>${new Date(u.created_at).toLocaleDateString()}</td>
+                    <td>
+                        <div class="flex gap-sm">
+                            <button class="btn btn-sm btn-ghost" onclick="editUser(${u.id})">✏️</button>
+                            ${u.id !== currentUser.id ? `<button class="btn btn-sm btn-ghost" onclick="deleteUser(${u.id})">🗑️</button>` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('totalUsers').textContent = allUsers.length;
+            document.getElementById('activeUsers').textContent = allUsers.filter(u => u.status === 'active').length;
+            document.getElementById('inactiveUsers').textContent = allUsers.filter(u => u.status === 'inactive').length;
+            document.getElementById('adminUsers').textContent = allUsers.filter(u => u.role === 'admin').length;
+        }
+
+        async function createUser() {
+            const firstName = document.getElementById('newFirstName').value;
+            const lastName = document.getElementById('newLastName').value;
+            const email = document.getElementById('newEmail').value;
+            const phone = document.getElementById('newPhone').value;
+            const password = document.getElementById('newPassword').value;
+            const role = document.getElementById('newRole').value;
+            
+            if (!firstName || !lastName || !email || !password) { showToast('Fill required fields', 'error'); return; }
+            
+            try {
+                const response = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ first_name: firstName, last_name: lastName, email, phone, password, role }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success) { showToast('User created!', 'success'); closeModal('newUserModal'); loadUsers(); }
+                else { showToast(data.message, 'error'); }
+            } catch (error) { showToast('Error', 'error'); }
+        }
+
+        function editUser(id) {
+            const u = allUsers.find(x => x.id === id);
+            if (!u) return;
+            document.getElementById('editUserId').value = u.id;
+            document.getElementById('editStatus').value = u.status;
+            document.getElementById('editRole').value = u.role;
+            openModal('editUserModal');
+        }
+
+        async function updateUser() {
+            const id = document.getElementById('editUserId').value;
+            try {
+                const response = await fetch(`/api/users/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: document.getElementById('editStatus').value, role: document.getElementById('editRole').value }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success) { showToast('User updated!', 'success'); closeModal('editUserModal'); loadUsers(); }
+                else { showToast(data.message, 'error'); }
+            } catch (error) { showToast('Error', 'error'); }
+        }
+
+        async function deleteUser(id) {
+            if (!confirm('Delete this user?')) return;
+            try {
+                const response = await fetch(`/api/users/${id}`, { method: 'DELETE', credentials: 'include' });
+                const data = await response.json();
+                if (data.success) { showToast('User deleted!', 'success'); loadUsers(); }
+                else { showToast(data.message, 'error'); }
+            } catch (error) { showToast('Error', 'error'); }
+        }
+
+        async function logout() { await fetch('/api/logout', { method: 'POST', credentials: 'include' }); window.location.href = '/login'; }
+        function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow = 'auto'; }
+        function showToast(m, t) { const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = `toast toast-${t}`; toast.innerHTML = `<span>${m}</span><button onclick="this.parentElement.remove()" style="margin-left:auto;border:none;background:none;cursor:pointer;">×</button>`; container.appendChild(toast); setTimeout(() => toast.remove(), 5000); }
+    </script>
+</body>
+</html>

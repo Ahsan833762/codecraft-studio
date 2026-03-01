@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - CodeCraft Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --white: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+        }
+
+        /* Navbar (from index.html) */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .navbar .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        
+        .navbar .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .navbar .logo-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        
+        .navbar .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .navbar .nav-link {
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .navbar .nav-link:hover, .navbar .nav-link.active {
+            color: #6366f1;
+        }
+        
+        .navbar .nav-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .navbar .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+        
+        .navbar .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+        }
+        
+        .navbar .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+        
+        .navbar .btn-secondary {
+            background: white;
+            color: #6366f1;
+            border: 2px solid #6366f1;
+        }
+        
+        .navbar .btn-secondary:hover {
+            background: #6366f1;
+            color: white;
+        }
+
+        /* User Dropdown */
+        .user-dropdown { position: relative; display: inline-block; }
+        .user-dropdown-btn { display: flex; align-items: center; gap: 8px; padding: 0.5rem 1rem; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s; border: none; font-size: 0.95rem; }
+        .user-dropdown-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3); }
+        .user-dropdown-content { display: none; position: absolute; right: 0; top: 100%; margin-top: 10px; background: white; min-width: 200px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); z-index: 1001; overflow: hidden; }
+        .user-dropdown-content.show { display: block; animation: fadeIn 0.2s ease; }
+        .user-dropdown-header { padding: 15px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; }
+        .user-dropdown-header .user-name { font-weight: 700; font-size: 1rem; }
+        .user-dropdown-header .user-email { font-size: 0.8rem; opacity: 0.9; }
+        .user-dropdown-item { padding: 12px 15px; display: flex; align-items: center; gap: 10px; color: #64748b; text-decoration: none; transition: all 0.2s; cursor: pointer; border: none; background: none; width: 100%; font-size: 0.95rem; font-family: inherit; }
+        .user-dropdown-item:hover { background: #f1f5f9; color: #6366f1; }
+        .user-dropdown-item.logout { color: #ef4444; border-top: 1px solid #e2e8f0; }
+        .user-dropdown-item.logout:hover { background: #fef2f2; color: #dc2626; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Navigation - only for old nav style, not .navbar */
+        nav:not(.navbar) {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--gray-200);
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--gray-700);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: color 0.3s;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* User Dropdown Styles */
+        .user-dropdown {
+            position: relative;
+            display: none;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .user-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .user-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            min-width: 180px;
+            display: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+            animation: dropdownFade 0.2s ease;
+        }
+
+        @keyframes dropdownFade {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .dropdown-menu a:hover {
+            background: var(--gray-100);
+            color: var(--primary);
+        }
+
+        .dropdown-menu a i {
+            margin-right: 0.5rem;
+            width: 1.2rem;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--gray-200);
+            margin: 0;
+        }
+
+        /* Hide login button when user is logged in */
+        .nav-actions .btn-outline.login-btn {
+            display: inline;
+        }
+
+        .nav-actions .btn-outline.login-btn.hidden {
+            display: none;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 0.95rem;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Main Content */
+        .contact-container {
+            min-height: 100vh;
+            padding: 8rem 5% 4rem;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .contact-wrapper {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 3rem;
+        }
+
+        /* Contact Info */
+        .contact-info {
+            padding: 2.5rem;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .contact-info h1 {
+            font-size: 2.5rem;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+        }
+
+        .contact-info p {
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.2rem;
+            background: var(--gray-50);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            background: var(--gray-100);
+            transform: translateX(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .info-text h3 {
+            color: var(--gray-900);
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-text p {
+            color: var(--gray-500);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        /* Social Links */
+        .social-links {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            width: 45px;
+            height: 45px;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-5px) rotate(5deg);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            border-color: var(--primary);
+        }
+
+        /* Contact Form */
+        .contact-form-container {
+            padding: 2.5rem;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-header {
+            margin-bottom: 2rem;
+        }
+
+        .form-header h2 {
+            font-size: 2rem;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+            color: var(--gray-500);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-group label .required {
+            color: var(--accent-red);
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-300);
+            border-radius: 12px;
+            color: var(--gray-900);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--gray-400);
+        }
+
+        .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-error {
+            color: var(--accent-red);
+            font-size: 0.85rem;
+            margin-top: 0.4rem;
+            display: none;
+        }
+
+        .form-group.error .form-input,
+        .form-group.error .form-textarea {
+            border-color: var(--accent-red);
+        }
+
+        .form-group.error .form-error {
+            display: block;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.2rem;
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-loader {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .submit-btn.loading .btn-loader {
+            display: inline-block;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: none;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert.show {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--accent-green);
+            color: #047857;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--accent-red);
+            color: #dc2626;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .contact-wrapper {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-info, .contact-form-container {
+                padding: 1.5rem;
+            }
+            
+            .contact-info h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">CC</div>
+                <span class="logo-text">CodeCraft Studio</span>
+            </a>
+            <div class="nav-menu">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/services" class="nav-link">Services</a>
+                <a href="/portfolio" class="nav-link">Portfolio</a>
+                <a href="/process" class="nav-link">Process</a>
+                <a href="/pricing" class="nav-link">Pricing</a>
+                <a href="/contact" class="nav-link active">Contact</a>
+            </div>
+            <div class="nav-actions" id="navActions">
+                <a href="/login" class="btn btn-secondary">Login</a>
+                <a href="/signup" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="contact-container">
+        <div class="contact-wrapper">
+            <!-- Contact Info -->
+            <div class="contact-info">
+                <h1>Get In Touch</h1>
+                <p>Have a question or want to work together? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="info-text">
+                        <h3>Our Location</h3>
+                        <p>123 Tech Street, Karachi, Pakistan</p>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="info-text">
+                        <h3>Email Us</h3>
+                        <p>info@codecraftstudio.com</p>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="info-text">
+                        <h3>Call Us</h3>
+                        <p>+92 300 1234567</p>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="info-text">
+                        <h3>Working Hours</h3>
+                        <p>Mon - Fri: 9:00 AM - 7:00 PM</p>
+                    </div>
+                </div>
+                
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            
+            <!-- Contact Form -->
+            <div class="contact-form-container">
+                <div class="form-header">
+                    <h2>Send Us a Message</h2>
+                    <p>Fill out the form below and we'll get back to you shortly.</p>
+                </div>
+                
+                <div id="alertSuccess" class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="successMessage">Message sent successfully! We'll contact you soon.</span>
+                </div>
+                
+                <div id="alertError" class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="errorMessage">Something went wrong. Please try again.</span>
+                </div>
+                
+                <form id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name <span class="required">*</span></label>
+                            <input type="text" class="form-input" id="fullName" name="full_name" placeholder="Enter Your Full Name" required>
+                            <p class="form-error">Full name is required</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Email Address <span class="required">*</span></label>
+                            <input type="email" class="form-input" id="email" name="email" placeholder="abc@example.com" required>
+                            <p class="form-error">Valid email is required</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" class="form-input" id="phone" name="phone" placeholder="+92 300 1234567">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <input type="text" class="form-input" id="subject" name="subject" placeholder="Project Inquiry">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Message <span class="required">*</span></label>
+                        <textarea class="form-textarea" id="message" name="message" placeholder="Tell us about your project or inquiry..." required></textarea>
+                        <p class="form-error">Message is required</p>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary submit-btn" id="submitBtn">
+                        <span class="btn-loader"></span>
+                        <span>Send Message</span>
+                        <i class="fas fa-paper-plane" style="margin-left: 8px;"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dynamic Navbar - Role-Based Authentication
+        async function updateNavbar() {
+            const navActions = document.getElementById('navActions');
+            if (!navActions) return;
+            
+            try {
+                const response = await fetch('/api/check-auth');
+                const data = await response.json();
+                
+                if (data.success && data.user) {
+                    const userName = data.user.first_name || 'User';
+                    const userInitial = userName.charAt(0).toUpperCase();
+                    
+                    if (data.user.role === 'admin') {
+                        navActions.innerHTML = `
+                            <div class="user-dropdown">
+                                <button class="user-dropdown-btn">
+                                    <div class="user-avatar">${userInitial}</div>
+                                    <span>${userName}</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="user-dropdown-content">
+                                    <a href="/admin"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</a>
+                                    <a href="/admin/employees"><i class="fas fa-users"></i> Manage Employees</a>
+                                    <a href="/admin/clients"><i class="fas fa-building"></i> Manage Clients</a>
+                                    <a href="/admin/orders"><i class="fas fa-shopping-cart"></i> Manage Orders</a>
+                                    <a href="/admin/services"><i class="fas fa-tools"></i> Manage Services</a>
+                                    <a href="/admin/messages"><i class="fas fa-envelope"></i> Messages</a>
+                                    <a href="/admin/settings"><i class="fas fa-cog"></i> Settings</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="#" onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        navActions.innerHTML = `
+                            <div class="user-dropdown">
+                                <button class="user-dropdown-btn">
+                                    <div class="user-avatar">${userInitial}</div>
+                                    <span>${userName}</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="user-dropdown-content">
+                                    <a href="/dashboard"><i class="fas fa-tachometer-alt"></i> My Dashboard</a>
+                                    <a href="/profile"><i class="fas fa-user"></i> My Profile</a>
+                                    <a href="/projects"><i class="fas fa-folder"></i> My Projects</a>
+                                    <a href="/messages"><i class="fas fa-envelope"></i> Messages</a>
+                                    <a href="/settings"><i class="fas fa-cog"></i> Settings</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="#" onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } else {
+                    navActions.innerHTML = `
+                        <a href="/admin-login" class="btn btn-outline" style="margin-right: 8px;">Admin Login</a>
+                        <a href="/login" class="btn btn-outline" style="margin-right: 8px;">Login</a>
+                        <a href="/signup" class="btn btn-primary">Sign Up</a>
+                    `;
+                }
+            } catch (error) {
+                navActions.innerHTML = `
+                    <a href="/admin-login" class="btn btn-outline" style="margin-right: 8px;">Admin Login</a>
+                    <a href="/login" class="btn btn-outline" style="margin-right: 8px;">Login</a>
+                    <a href="/signup" class="btn btn-primary">Sign Up</a>
+                `;
+            }
+        }
+        
+        async function logout() {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/';
+            } catch (error) {
+                window.location.href = '/';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', updateNavbar);
+        
+        // Form Validation and Submission
+        const form = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const alertSuccess = document.getElementById('alertSuccess');
+        const alertError = document.getElementById('alertError');
+        
+        // Clear error on input
+        document.querySelectorAll('.form-input, .form-textarea').forEach(input => {
+            input.addEventListener('input', function() {
+                this.parentElement.classList.remove('error');
+            });
+        });
+        
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Reset alerts
+            alertSuccess.classList.remove('show');
+            alertError.classList.remove('show');
+            
+            // Validate
+            let isValid = true;
+            const fullName = document.getElementById('fullName');
+            const email = document.getElementById('email');
+            const message = document.getElementById('message');
+            
+            if (!fullName.value.trim()) {
+                fullName.parentElement.classList.add('error');
+                isValid = false;
+            }
+            
+            if (!email.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+                email.parentElement.classList.add('error');
+                isValid = false;
+            }
+            
+            if (!message.value.trim()) {
+                message.parentElement.classList.add('error');
+                isValid = false;
+            }
+            
+            if (!isValid) return;
+            
+            // Submit form
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            
+            const formData = {
+                full_name: fullName.value.trim(),
+                email: email.value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                subject: document.getElementById('subject').value.trim(),
+                message: message.value.trim()
+            };
+            
+            try {
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alertSuccess.classList.add('show');
+                    form.reset();
+                } else {
+                    alertError.classList.add('show');
+                    document.getElementById('errorMessage').textContent = data.message;
+                }
+            } catch (error) {
+                alertError.classList.add('show');
+                document.getElementById('errorMessage').textContent = 'Network error. Please try again.';
+            } finally {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Check user login status and update navbar
+        async function updateNavbar() {
+            try {
+                const response = await fetch('/api/user');
+                const data = await response.json();
+                const navActions = document.getElementById('navActions');
+                
+                if (data.success && data.user) {
+                    navActions.innerHTML = `
+                        <div class="user-dropdown">
+                            <button class="user-dropdown-btn" onclick="toggleDropdown(event)">
+                                <i class="fas fa-user-circle"></i>
+                                <span>${data.user.first_name}</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="user-dropdown-content" id="userDropdown">
+                                <div class="user-dropdown-header">
+                                    <div class="user-name">${data.user.first_name} ${data.user.last_name || ''}</div>
+                                    <div class="user-email">${data.user.email}</div>
+                                </div>
+                                <a href="/profile" class="user-dropdown-item">
+                                    <i class="fas fa-user"></i> My Profile
+                                </a>
+                                <a href="/dashboard" class="user-dropdown-item">
+                                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                                </a>
+                                <button onclick="logout()" class="user-dropdown-item logout">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error checking user status:', error);
+            }
+        }
+        
+        function toggleDropdown(e) {
+            if (e) e.stopPropagation();
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+        
+        document.getElementById('userDropdown')?.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        document.addEventListener('click', function(e) {
+            const dropdown = document.querySelector('.user-dropdown');
+            if (dropdown && !dropdown.contains(e.target)) {
+                const dropdownContent = document.getElementById('userDropdown');
+                if (dropdownContent) dropdownContent.classList.remove('show');
+            }
+        });
+        
+        async function logout() {
+            try {
+                const response = await fetch('/api/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+                const data = await response.json();
+                if (data.success) window.location.href = '/';
+            } catch (error) {
+                console.error('Error logging out:', error);
+            }
+        }
+        
+        updateNavbar();
+    </script>
+</body>
+</html>

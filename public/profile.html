@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - CodeCraft Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&lt;/&gt;</text></svg>">
+</head>
+
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">CC</div>
+            <span class="sidebar-logo-text">CodeCraft</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/dashboard" class="sidebar-link"><span class="sidebar-icon">📊</span><span>Dashboard</span></a>
+            <a href="/customer-services" class="sidebar-link"><span class="sidebar-icon">🎫</span><span>Services</span></a>
+            <a href="/projects" class="sidebar-link"><span class="sidebar-icon">📁</span><span>Projects</span></a>
+            <a href="/messages" class="sidebar-link"><span class="sidebar-icon">💬</span><span>Messages</span></a>
+            <div class="sidebar-divider"></div>
+            <a href="/profile" class="sidebar-link active"><span class="sidebar-icon">👤</span><span>Profile</span></a>
+            <a href="/settings" class="sidebar-link"><span class="sidebar-icon">⚙️</span><span>Settings</span></a>
+            <div class="sidebar-divider" id="adminDivider" style="display: none;"></div>
+            <a href="/users" class="sidebar-link" id="usersLink" style="display: none;"><span class="sidebar-icon">👥</span><span>Users</span></a>
+            <a href="/analytics" class="sidebar-link" id="analyticsLink" style="display: none;"><span class="sidebar-icon">📈</span><span>Analytics</span></a>
+            <div class="sidebar-divider"></div>
+            <a href="/" class="sidebar-link" target="_blank"><span class="sidebar-icon">🌐</span><span>View Website</span></a>
+            <button class="sidebar-link" onclick="logout()" style="width: 100%; text-align: left; border: none; background: none; cursor: pointer;"><span class="sidebar-icon">🚪</span><span>Logout</span></button>
+        </nav>
+        <div class="sidebar-user" id="sidebarUser">
+            <div class="avatar" id="userAvatar">U</div>
+            <div><div style="font-weight: 600; font-size: 0.9rem;" id="userName">User Name</div><div style="font-size: 0.8rem; opacity: 0.7;" id="userRole">User</div></div>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+        <main class="main-content" style="padding: 0;">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-info">
+                    <div class="profile-avatar" id="profileAvatar">U</div>
+                    <div class="profile-details">
+                        <h1 id="profileName">User Name</h1>
+                        <p id="profileEmail">email@example.com</p>
+                        <span class="badge badge-primary" id="profileRole" style="margin-top: var(--space-sm);">User</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Content -->
+            <div style="padding: var(--space-xl);">
+                <div class="grid grid-cols-3" style="gap: var(--space-xl);">
+                    <!-- Stats -->
+                    <div class="card">
+                        <div class="card-header"><h3 class="card-title">📊 Your Stats</h3></div>
+                        <div class="card-body">
+                            <div style="display: grid; gap: var(--space-lg);">
+                                <div class="flex justify-between items-center">
+                                    <span>Projects</span>
+                                    <strong id="statProjects">0</strong>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>Services</span>
+                                    <strong id="statServices">0</strong>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>Messages</span>
+                                    <strong id="statMessages">0</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Info -->
+                    <div class="card" style="grid-column: span 2;">
+                        <div class="card-header"><h3 class="card-title">ℹ️ Account Information</h3></div>
+                        <div class="card-body">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg);">
+                                <div><label class="form-label">First Name</label><p id="infoFirstName">-</p></div>
+                                <div><label class="form-label">Last Name</label><p id="infoLastName">-</p></div>
+                                <div><label class="form-label">Email</label><p id="infoEmail">-</p></div>
+                                <div><label class="form-label">Phone</label><p id="infoPhone">-</p></div>
+                                <div><label class="form-label">Role</label><p id="infoRole">-</p></div>
+                                <div><label class="form-label">Status</label><p id="infoStatus">-</p></div>
+                                <div><label class="form-label">Member Since</label><p id="infoCreated">-</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="margin-top: var(--space-xl);">
+                    <button class="btn btn-primary" onclick="window.location.href='/settings'">⚙️ Edit Profile</button>
+                    <button class="btn btn-secondary" onclick="window.location.href='/dashboard'">📊 Go to Dashboard</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            if (currentUser?.role === 'admin') {
+                document.getElementById('adminDivider').style.display = 'block';
+                document.getElementById('usersLink').style.display = 'flex';
+                document.getElementById('analyticsLink').style.display = 'flex';
+            }
+        });
+
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/dashboard-data', { credentials: 'include' });
+                const data = await response.json();
+                if (!data.success) { window.location.href = '/login'; return; }
+                currentUser = data.user;
+                updateUI();
+                loadStats();
+            } catch (error) { window.location.href = '/login'; }
+        }
+
+        function updateUI() {
+            const initials = currentUser.first_name.charAt(0) + currentUser.last_name.charAt(0);
+            document.getElementById('userAvatar').textContent = initials.toUpperCase();
+            document.getElementById('userName').textContent = currentUser.first_name + ' ' + currentUser.last_name;
+            document.getElementById('userRole').textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
+
+            document.getElementById('profileAvatar').textContent = initials.toUpperCase();
+            document.getElementById('profileName').textContent = currentUser.first_name + ' ' + currentUser.last_name;
+            document.getElementById('profileEmail').textContent = currentUser.email;
+            document.getElementById('profileRole').textContent = currentUser.role.toUpperCase();
+
+            document.getElementById('infoFirstName').textContent = currentUser.first_name;
+            document.getElementById('infoLastName').textContent = currentUser.last_name;
+            document.getElementById('infoEmail').textContent = currentUser.email;
+            document.getElementById('infoPhone').textContent = currentUser.phone || 'Not set';
+            document.getElementById('infoRole').textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
+            document.getElementById('infoStatus').textContent = currentUser.status.charAt(0).toUpperCase() + currentUser.status.slice(1);
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/dashboard-data', { credentials: 'include' });
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('statProjects').textContent = data.data.my_projects || 0;
+                    document.getElementById('statServices').textContent = data.data.my_services || 0;
+                    document.getElementById('statMessages').textContent = data.data.my_messages || 0;
+                }
+            } catch (error) { console.error(error); }
+        }
+
+        async function logout() { await fetch('/api/logout', { method: 'POST', credentials: 'include' }); window.location.href = '/login'; }
+    </script>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - CodeCraft Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&lt;/&gt;</text></svg>">
+</head>
+
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">CC</div>
+            <span class="sidebar-logo-text">CodeCraft</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/dashboard" class="sidebar-link"><span class="sidebar-icon">📊</span><span>Dashboard</span></a>
+            <a href="/customer-services" class="sidebar-link"><span class="sidebar-icon">🎫</span><span>Services</span></a>
+            <a href="/projects" class="sidebar-link"><span class="sidebar-icon">📁</span><span>Projects</span></a>
+            <a href="/messages" class="sidebar-link"><span class="sidebar-icon">💬</span><span>Messages</span></a>
+            <div class="sidebar-divider"></div>
+            <a href="/profile" class="sidebar-link"><span class="sidebar-icon">👤</span><span>Profile</span></a>
+            <a href="/settings" class="sidebar-link active"><span class="sidebar-icon">⚙️</span><span>Settings</span></a>
+            <div class="sidebar-divider" id="adminDivider" style="display: none;"></div>
+            <a href="/users" class="sidebar-link" id="usersLink" style="display: none;"><span class="sidebar-icon">👥</span><span>Users</span></a>
+            <a href="/analytics" class="sidebar-link" id="analyticsLink" style="display: none;"><span class="sidebar-icon">📈</span><span>Analytics</span></a>
+            <div class="sidebar-divider"></div>
+            <a href="/" class="sidebar-link" target="_blank"><span class="sidebar-icon">🌐</span><span>View Website</span></a>
+            <button class="sidebar-link" onclick="logout()" style="width: 100%; text-align: left; border: none; background: none; cursor: pointer;"><span class="sidebar-icon">🚪</span><span>Logout</span></button>
+        </nav>
+        <div class="sidebar-user" id="sidebarUser">
+            <div class="avatar" id="userAvatar">U</div>
+            <div><div style="font-weight: 600; font-size: 0.9rem;" id="userName">User Name</div><div style="font-size: 0.8rem; opacity: 0.7;" id="userRole">User</div></div>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="main-header">
+            <div class="flex items-center gap-lg">
+                <div>
+                    <h1 class="page-title">Settings</h1>
+                    <p class="page-subtitle">Manage your account preferences</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Profile Settings -->
+            <div class="settings-section">
+                <div class="settings-header">
+                    <h3 class="settings-title">👤 Profile Information</h3>
+                </div>
+                <div class="settings-body">
+                    <form id="profileForm">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg);">
+                            <div class="form-group">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-input" id="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-input" id="lastName" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-input" id="email" disabled>
+                            <p class="form-hint">Email cannot be changed</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-input" id="phone">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Password Settings -->
+            <div class="settings-section">
+                <div class="settings-header">
+                    <h3 class="settings-title">🔒 Change Password</h3>
+                </div>
+                <div class="settings-body">
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" class="form-input" id="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">New Password</label>
+                            <input type="password" class="form-input" id="newPassword" required minlength="6">
+                            <p class="form-hint">Minimum 6 characters</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-input" id="confirmPassword" required>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="changePassword()">Update Password</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Notification Settings -->
+            <div class="settings-section">
+                <div class="settings-header">
+                    <h3 class="settings-title">🔔 Notification Preferences</h3>
+                </div>
+                <div class="settings-body">
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-label">Email Notifications</div>
+                            <div class="settings-description">Receive email updates about your projects</div>
+                        </div>
+                        <div class="toggle" id="emailNotifToggle" onclick="toggleSetting(this, 'email_notifications')"></div>
+                    </div>
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-label">SMS Notifications</div>
+                            <div class="settings-description">Receive text messages for urgent updates</div>
+                        </div>
+                        <div class="toggle" id="smsNotifToggle" onclick="toggleSetting(this, 'sms_notifications')"></div>
+                    </div>
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-label">Marketing Emails</div>
+                            <div class="settings-description">Receive news about new features and offers</div>
+                        </div>
+                        <div class="toggle" id="marketingToggle" onclick="toggleSetting(this, 'marketing_emails')"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacy Settings -->
+            <div class="settings-section">
+                <div class="settings-header">
+                    <h3 class="settings-title">🔐 Privacy & Security</h3>
+                </div>
+                <div class="settings-body">
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-label">Two-Factor Authentication</div>
+                            <div class="settings-description">Add an extra layer of security</div>
+                        </div>
+                        <button class="btn btn-secondary btn-sm">Enable</button>
+                    </div>
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-label">Active Sessions</div>
+                            <div class="settings-description">Manage your active sessions across devices</div>
+                        </div>
+                        <button class="btn btn-secondary btn-sm">View All</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="settings-section" style="border: 2px solid var(--accent-red);">
+                <div class="settings-header">
+                    <h3 class="settings-title" style="color: var(--accent-red);">⚠️ Danger Zone</h3>
+                </div>
+                <div class="settings-body">
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-label">Delete Account</div>
+                            <div class="settings-description">Permanently delete your account and all data</div>
+                        </div>
+                        <button class="btn btn-danger btn-sm" onclick="deleteAccount()">Delete Account</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        let currentUser = null;
+        let settings = {};
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            await loadSettings();
+            if (currentUser?.role === 'admin') {
+                document.getElementById('adminDivider').style.display = 'block';
+                document.getElementById('usersLink').style.display = 'flex';
+                document.getElementById('analyticsLink').style.display = 'flex';
+            }
+        });
+
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/dashboard-data', { credentials: 'include' });
+                const data = await response.json();
+                if (!data.success) { window.location.href = '/login'; return; }
+                currentUser = data.user;
+                updateUserInfo();
+                loadUserData();
+            } catch (error) { window.location.href = '/login'; }
+        }
+
+        function updateUserInfo() {
+            document.getElementById('userAvatar').textContent = (currentUser.first_name.charAt(0) + currentUser.last_name.charAt(0)).toUpperCase();
+            document.getElementById('userName').textContent = currentUser.first_name + ' ' + currentUser.last_name;
+            document.getElementById('userRole').textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
+        }
+
+        function loadUserData() {
+            document.getElementById('firstName').value = currentUser.first_name;
+            document.getElementById('lastName').value = currentUser.last_name;
+            document.getElementById('email').value = currentUser.email;
+            document.getElementById('phone').value = currentUser.phone || '';
+        }
+
+        async function loadSettings() {
+            try {
+                const response = await fetch('/api/settings', { credentials: 'include' });
+                const data = await response.json();
+                if (data.success) {
+                    settings = data.settings;
+                    if (settings.email_notifications === 'true') document.getElementById('emailNotifToggle').classList.add('active');
+                    if (settings.sms_notifications === 'true') document.getElementById('smsNotifToggle').classList.add('active');
+                    if (settings.marketing_emails === 'true') document.getElementById('marketingToggle').classList.add('active');
+                }
+            } catch (error) { console.error(error); }
+        }
+
+        async function updateProfile() {
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const phone = document.getElementById('phone').value;
+            
+            if (!firstName || !lastName) { showToast('Please fill required fields', 'error'); return; }
+            
+            try {
+                const response = await fetch(`/api/users/${currentUser.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ first_name: firstName, last_name: lastName, phone }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success) { showToast('Profile updated!', 'success'); currentUser.first_name = firstName; currentUser.last_name = lastName; currentUser.phone = phone; updateUserInfo(); }
+                else { showToast(data.message, 'error'); }
+            } catch (error) { showToast('Error', 'error'); }
+        }
+
+        async function changePassword() {
+            const current = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            
+            if (newPass !== confirm) { showToast('Passwords do not match', 'error'); return; }
+            if (newPass.length < 6) { showToast('Password must be at least 6 characters', 'error'); return; }
+            
+            try {
+                const response = await fetch('/api/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ current_password: current, new_password: newPass }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success) { showToast('Password changed!', 'success'); document.getElementById('passwordForm').reset(); }
+                else { showToast(data.message, 'error'); }
+            } catch (error) { showToast('Error', 'error'); }
+        }
+
+        async function toggleSetting(el, key) {
+            el.classList.toggle('active');
+            settings[key] = el.classList.contains('active') ? 'true' : 'false';
+            try {
+                await fetch('/api/settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ settings }),
+                    credentials: 'include'
+                });
+                showToast('Setting updated', 'success');
+            } catch (error) { showToast('Error', 'error'); }
+        }
+
+        function deleteAccount() {
+            if (confirm('Are you sure? This cannot be undone!')) {
+                showToast('Contact admin to delete account', 'warning');
+            }
+        }
+
+        async function logout() { await fetch('/api/logout', { method: 'POST', credentials: 'include' }); window.location.href = '/login'; }
+        function showToast(m, t) { const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = `toast toast-${t}`; toast.innerHTML = `<span>${m}</span><button onclick="this.parentElement.remove()" style="margin-left:auto;border:none;background:none;cursor:pointer;">×</button>`; container.appendChild(toast); setTimeout(() => toast.remove(), 5000); }
+    </script>
+</body>
+</html>

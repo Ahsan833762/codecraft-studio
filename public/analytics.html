@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - CodeCraft Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&lt;/&gt;</text></svg>">
+</head>
+
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">CC</div>
+            <span class="sidebar-logo-text">CodeCraft</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/dashboard" class="sidebar-link"><span class="sidebar-icon">📊</span><span>Dashboard</span></a>
+            <a href="/customer-services" class="sidebar-link"><span class="sidebar-icon">🎫</span><span>Services</span></a>
+            <a href="/projects" class="sidebar-link"><span class="sidebar-icon">📁</span><span>Projects</span></a>
+            <a href="/messages" class="sidebar-link"><span class="sidebar-icon">💬</span><span>Messages</span></a>
+            <div class="sidebar-divider"></div>
+            <a href="/profile" class="sidebar-link"><span class="sidebar-icon">👤</span><span>Profile</span></a>
+            <a href="/settings" class="sidebar-link"><span class="sidebar-icon">⚙️</span><span>Settings</span></a>
+            <div class="sidebar-divider"></div>
+            <a href="/users" class="sidebar-link"><span class="sidebar-icon">👥</span><span>Users</span></a>
+            <a href="/analytics" class="sidebar-link active"><span class="sidebar-icon">📈</span><span>Analytics</span></a>
+            <div class="sidebar-divider"></div>
+            <a href="/" class="sidebar-link" target="_blank"><span class="sidebar-icon">🌐</span><span>View Website</span></a>
+            <button class="sidebar-link" onclick="logout()" style="width: 100%; text-align: left; border: none; background: none; cursor: pointer;"><span class="sidebar-icon">🚪</span><span>Logout</span></button>
+        </nav>
+        <div class="sidebar-user" id="sidebarUser">
+            <div class="avatar" id="userAvatar">U</div>
+            <div><div style="font-weight: 600; font-size: 0.9rem;" id="userName">User Name</div><div style="font-size: 0.8rem; opacity: 0.7;" id="userRole">Admin</div></div>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="main-header">
+            <div class="flex items-center gap-lg">
+                <div>
+                    <h1 class="page-title">Analytics</h1>
+                    <p class="page-subtitle">System performance and user activity</p>
+                </div>
+            </div>
+            <button class="btn btn-secondary" onclick="loadAnalytics()">🔄 Refresh</button>
+        </header>
+
+        <main class="main-content">
+            <!-- Stats -->
+            <div class="stats-grid" style="margin-bottom: var(--space-xl);">
+                <div class="stat-card"><div class="stat-icon primary">👥</div><div class="stat-value" id="totalUsers">0</div><div class="stat-label">Total Users</div></div>
+                <div class="stat-card"><div class="stat-icon success">🎫</div><div class="stat-value" id="totalServices">0</div><div class="stat-label">Services</div></div>
+                <div class="stat-card"><div class="stat-icon warning">📁</div><div class="stat-value" id="totalProjects">0</div><div class="stat-label">Projects</div></div>
+                <div class="stat-card"><div class="stat-icon danger">💬</div><div class="stat-value" id="totalMessages">0</div><div class="stat-label">Messages</div></div>
+            </div>
+
+            <!-- Charts Placeholder -->
+            <div class="grid grid-cols-2" style="margin-bottom: var(--space-xl);">
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">📊 User Activity</h3></div>
+                    <div class="card-body" style="height: 300px; display: flex; align-items: center; justify-content: center; color: var(--gray-400);">
+                        <div style="text-align: center;">
+                            <span style="font-size: 3rem;">📈</span>
+                            <p>Activity Chart</p>
+                            <p style="font-size: 0.85rem;">(Chart library integration ready)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">🎫 Services Overview</h3></div>
+                    <div class="card-body" style="height: 300px; display: flex; align-items: center; justify-content: center; color: var(--gray-400);">
+                        <div style="text-align: center;">
+                            <span style="font-size: 3rem;">🥧</span>
+                            <p>Pie Chart</p>
+                            <p style="font-size: 0.85rem;">(Chart library integration ready)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Log -->
+            <div class="card">
+                <div class="card-header flex justify-between items-center">
+                    <h3 class="card-title">📋 Activity Log</h3>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <div class="table-container" style="box-shadow: none;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User</th>
+                                    <th>Action</th>
+                                    <th>Details</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analyticsTableBody">
+                                <tr><td colspan="5" style="text-align: center; padding: var(--space-2xl);"><div class="spinner" style="margin: 0 auto;"></div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            await loadStats();
+            await loadAnalytics();
+        });
+
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/dashboard-data', { credentials: 'include' });
+                const data = await response.json();
+                if (!data.success) { window.location.href = '/login'; return; }
+                if (data.user.role !== 'admin') { window.location.href = '/dashboard'; return; }
+                currentUser = data.user;
+                document.getElementById('userAvatar').textContent = (currentUser.first_name.charAt(0) + currentUser.last_name.charAt(0)).toUpperCase();
+                document.getElementById('userName').textContent = currentUser.first_name + ' ' + currentUser.last_name;
+                document.getElementById('userRole').textContent = 'Admin';
+            } catch (error) { window.location.href = '/login'; }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/stats', { credentials: 'include' });
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('totalUsers').textContent = data.stats.total_users || 0;
+                    document.getElementById('totalServices').textContent = data.stats.total_services || 0;
+                    document.getElementById('totalProjects').textContent = data.stats.total_projects || 0;
+                    document.getElementById('totalMessages').textContent = data.stats.total_messages || 0;
+                }
+            } catch (error) { console.error(error); }
+        }
+
+        async function loadAnalytics() {
+            const tbody = document.getElementById('analyticsTableBody');
+            try {
+                const response = await fetch('/api/analytics', { credentials: 'include' });
+                const data = await response.json();
+                if (data.success && data.analytics.length > 0) {
+                    tbody.innerHTML = data.analytics.map(a => `
+                        <tr>
+                            <td>#${a.id}</td>
+                            <td>${a.first_name || 'System'} ${a.last_name || ''}</td>
+                            <td><span class="badge badge-primary">${a.action_type}</span></td>
+                            <td>${a.metadata ? JSON.stringify(a.metadata).substring(0, 30) : '-'}</td>
+                            <td>${new Date(a.created_at).toLocaleString()}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: var(--space-2xl);">No activity recorded yet</td></tr>';
+                }
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: var(--space-2xl);">Error loading analytics</td></tr>';
+            }
+        }
+
+        async function logout() { await fetch('/api/logout', { method: 'POST', credentials: 'include' }); window.location.href = '/login'; }
+        function showToast(m, t) { const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = `toast toast-${t}`; toast.innerHTML = `<span>${m}</span><button onclick="this.parentElement.remove()" style="margin-left:auto;border:none;background:none;cursor:pointer;">×</button>`; container.appendChild(toast); setTimeout(() => toast.remove(), 5000); }
+    </script>
+</body>
+</html>

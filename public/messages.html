@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - CodeCraft Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&lt;/&gt;</text></svg>">
+</head>
+
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">CC</div>
+            <span class="sidebar-logo-text">CodeCraft</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/dashboard" class="sidebar-link"><span class="sidebar-icon">📊</span><span>Dashboard</span></a>
+            <a href="/customer-services" class="sidebar-link"><span class="sidebar-icon">🎫</span><span>Services</span></a>
+            <a href="/projects" class="sidebar-link"><span class="sidebar-icon">📁</span><span>Projects</span></a>
+            <a href="/messages" class="sidebar-link active"><span class="sidebar-icon">💬</span><span>Messages</span></a>
+            <div class="sidebar-divider"></div>
+            <a href="/profile" class="sidebar-link"><span class="sidebar-icon">👤</span><span>Profile</span></a>
+            <a href="/settings" class="sidebar-link"><span class="sidebar-icon">⚙️</span><span>Settings</span></a>
+            <div class="sidebar-divider" id="adminDivider" style="display: none;"></div>
+            <a href="/users" class="sidebar-link" id="usersLink" style="display: none;"><span class="sidebar-icon">👥</span><span>Users</span></a>
+            <a href="/analytics" class="sidebar-link" id="analyticsLink" style="display: none;"><span class="sidebar-icon">📈</span><span>Analytics</span></a>
+            <div class="sidebar-divider"></div>
+            <a href="/" class="sidebar-link" target="_blank"><span class="sidebar-icon">🌐</span><span>View Website</span></a>
+            <button class="sidebar-link" onclick="logout()" style="width: 100%; text-align: left; border: none; background: none; cursor: pointer;"><span class="sidebar-icon">🚪</span><span>Logout</span></button>
+        </nav>
+        <div class="sidebar-user" id="sidebarUser">
+            <div class="avatar" id="userAvatar">U</div>
+            <div><div style="font-weight: 600; font-size: 0.9rem;" id="userName">User Name</div><div style="font-size: 0.8rem; opacity: 0.7;" id="userRole">User</div></div>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="main-header">
+            <div class="flex items-center gap-lg">
+                <div>
+                    <h1 class="page-title">Messages</h1>
+                    <p class="page-subtitle">Communication center for all your inquiries</p>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="openModal('newMessageModal')"><span>+</span> New Message</button>
+        </header>
+
+        <main class="main-content">
+            <div class="card">
+                <div class="card-header flex justify-between items-center">
+                    <h3 class="card-title">Inbox</h3>
+                    <span id="messagesCount" class="badge badge-primary">0 Messages</span>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <div class="table-container" style="box-shadow: none;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>From</th>
+                                    <th>Subject</th>
+                                    <th>Message</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="messagesTableBody">
+                                <tr><td colspan="6" style="text-align: center; padding: var(--space-2xl);"><div class="spinner" style="margin: 0 auto;"></div><p style="margin-top: var(--space-md);">Loading messages...</p></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Message Modal -->
+    <div class="modal-overlay" id="newMessageModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">💬 New Message</h3>
+                <button class="modal-close" onclick="closeModal('newMessageModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">To *</label>
+                    <select class="form-input form-select" id="messageTo" required></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Subject *</label>
+                    <input type="text" class="form-input" id="messageSubject" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message *</label>
+                    <textarea class="form-input form-textarea" id="messageContent" required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('newMessageModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Message Modal -->
+    <div class="modal-overlay" id="viewMessageModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">📧 Message</h3>
+                <button class="modal-close" onclick="closeModal('viewMessageModal')">×</button>
+            </div>
+            <div class="modal-body" id="viewMessageContent"></div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('viewMessageModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        let currentUser = null;
+        let allMessages = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            await loadMessages();
+            await loadRecipients();
+            if (currentUser?.role === 'admin') {
+                document.getElementById('adminDivider').style.display = 'block';
+                document.getElementById('usersLink').style.display = 'flex';
+                document.getElementById('analyticsLink').style.display = 'flex';
+            }
+        });
+
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/dashboard-data', { credentials: 'include' });
+                const data = await response.json();
+                if (!data.success) { window.location.href = '/login'; return; }
+                currentUser = data.user;
+                updateUserInfo();
+            } catch (error) { window.location.href = '/login'; }
+        }
+
+        function updateUserInfo() {
+            document.getElementById('userAvatar').textContent = (currentUser.first_name.charAt(0) + currentUser.last_name.charAt(0)).toUpperCase();
+            document.getElementById('userName').textContent = currentUser.first_name + ' ' + currentUser.last_name;
+            document.getElementById('userRole').textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
+        }
+
+        async function loadMessages() {
+            try {
+                const response = await fetch('/api/messages', { credentials: 'include' });
+                const data = await response.json();
+                if (data.success) { allMessages = data.messages; renderMessages(allMessages); }
+            } catch (error) { console.error(error); }
+        }
+
+        async function loadRecipients() {
+            try {
+                const response = await fetch('/api/users', { credentials: 'include' });
+                const data = await response.json();
+                if (data.success) {
+                    const select = document.getElementById('messageTo');
+                    data.users.filter(u => u.id !== currentUser.id).forEach(user => {
+                        const option = document.createElement('option');
+                        option.value = user.id;
+                        option.textContent = `${user.first_name} ${user.last_name} (${user.email})`;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) { console.error(error); }
+        }
+
+        function renderMessages(messages) {
+            const tbody = document.getElementById('messagesTableBody');
+            document.getElementById('messagesCount').textContent = `${messages.length} Messages`;
+            if (messages.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: var(--space-2xl);">No messages</td></tr>'; return; }
+            tbody.innerHTML = messages.map(m => `
+                <tr>
+                    <td><strong>${m.from_user_id === currentUser.id ? 'You → ' + m.to_first_name : m.from_first_name + ' ' + m.from_last_name}</strong></td>
+                    <td>${m.subject}</td>
+                    <td>${m.message.substring(0, 40)}...</td>
+                    <td><span class="badge ${m.is_read === 'yes' ? 'badge-success' : 'badge-warning'}">${m.is_read === 'yes' ? 'Read' : 'Unread'}</span></td>
+                    <td>${new Date(m.created_at).toLocaleDateString()}</td>
+                    <td><div class="flex gap-sm"><button class="btn btn-sm btn-ghost" onclick="viewMessage(${m.id})">👁️</button><button class="btn btn-sm btn-ghost" onclick="deleteMessage(${m.id})">🗑️</button></div></td>
+                </tr>
+            `).join('');
+        }
+
+        async function sendMessage() {
+            const toId = document.getElementById('messageTo').value;
+            const subject = document.getElementById('messageSubject').value;
+            const message = document.getElementById('messageContent').value;
+            if (!toId || !subject || !message) { showToast('Fill all fields', 'error'); return; }
+            try {
+                const response = await fetch('/api/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ to_user_id: toId, subject, message }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success) { showToast('Message sent!', 'success'); closeModal('newMessageModal'); loadMessages(); }
+                else { showToast(data.message, 'error'); }
+            } catch (error) { showToast('Error', 'error'); }
+        }
+
+        function viewMessage(id) {
+            const m = allMessages.find(x => x.id === id);
+            if (!m) return;
+            document.getElementById('viewMessageContent').innerHTML = `
+                <div style="display: grid; gap: var(--space-md);">
+                    <div><label class="form-label">From</label><p><strong>${m.from_first_name} ${m.from_last_name}</strong></p></div>
+                    <div><label class="form-label">Subject</label><p>${m.subject}</p></div>
+                    <div><label class="form-label">Message</label><p style="white-space: pre-wrap;">${m.message}</p></div>
+                    <div><label class="form-label">Date</label><p>${new Date(m.created_at).toLocaleString()}</p></div>
+                </div>
+            `;
+            openModal('viewMessageModal');
+            if (m.is_read === 'no' && m.to_user_id === currentUser.id) {
+                fetch(`/api/messages/${id}/read`, { method: 'PUT', credentials: 'include' }).then(() => loadMessages());
+            }
+        }
+
+        async function deleteMessage(id) {
+            if (!confirm('Delete this message?')) return;
+            try {
+                const response = await fetch(`/api/messages/${id}`, { method: 'DELETE', credentials: 'include' });
+                const data = await response.json();
+                if (data.success) { showToast('Deleted!', 'success'); loadMessages(); }
+                else { showToast(data.message, 'error'); }
+            } catch (error) { showToast('Error', 'error'); }
+        }
+
+        async function logout() { await fetch('/api/logout', { method: 'POST', credentials: 'include' }); window.location.href = '/login'; }
+        function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow = 'auto'; }
+        function showToast(m, t) { const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = `toast toast-${t}`; toast.innerHTML = `<span>${m}</span><button onclick="this.parentElement.remove()" style="margin-left:auto;border:none;background:none;cursor:pointer;">×</button>`; container.appendChild(toast); setTimeout(() => toast.remove(), 5000); }
+    </script>
+</body>
+</html>

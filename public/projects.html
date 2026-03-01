@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - CodeCraft Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&lt;/&gt;</text></svg>">
+</head>
+
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">CC</div>
+            <span class="sidebar-logo-text">CodeCraft</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/dashboard" class="sidebar-link"><span class="sidebar-icon">📊</span><span>Dashboard</span></a>
+            <a href="/customer-services" class="sidebar-link"><span class="sidebar-icon">🎫</span><span>Services</span></a>
+            <a href="/projects" class="sidebar-link active"><span class="sidebar-icon">📁</span><span>Projects</span></a>
+            <a href="/messages" class="sidebar-link"><span class="sidebar-icon">💬</span><span>Messages</span></a>
+            <div class="sidebar-divider"></div>
+            <a href="/profile" class="sidebar-link"><span class="sidebar-icon">👤</span><span>Profile</span></a>
+            <a href="/settings" class="sidebar-link"><span class="sidebar-icon">⚙️</span><span>Settings</span></a>
+            <div class="sidebar-divider" id="adminDivider" style="display: none;"></div>
+            <a href="/users" class="sidebar-link" id="usersLink" style="display: none;"><span class="sidebar-icon">👥</span><span>Users</span></a>
+            <a href="/analytics" class="sidebar-link" id="analyticsLink" style="display: none;"><span class="sidebar-icon">📈</span><span>Analytics</span></a>
+            <div class="sidebar-divider"></div>
+            <a href="/" class="sidebar-link" target="_blank"><span class="sidebar-icon">🌐</span><span>View Website</span></a>
+            <button class="sidebar-link" onclick="logout()" style="width: 100%; text-align: left; border: none; background: none; cursor: pointer;"><span class="sidebar-icon">🚪</span><span>Logout</span></button>
+        </nav>
+        <div class="sidebar-user" id="sidebarUser">
+            <div class="avatar" id="userAvatar">U</div>
+            <div>
+                <div style="font-weight: 600; font-size: 0.9rem;" id="userName">User Name</div>
+                <div style="font-size: 0.8rem; opacity: 0.7;" id="userRole">User</div>
+            </div>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="main-header">
+            <div class="flex items-center gap-lg">
+                <div>
+                    <h1 class="page-title">Projects</h1>
+                    <p class="page-subtitle">Manage your projects and track progress</p>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="openModal('newProjectModal')"><span>+</span> New Project</button>
+        </header>
+
+        <main class="main-content">
+            <div class="card">
+                <div class="card-header flex justify-between items-center">
+                    <h3 class="card-title">All Projects</h3>
+                    <span id="projectsCount" class="badge badge-primary">0 Projects</span>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <div class="table-container" style="box-shadow: none;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Project Name</th>
+                                    <th>Type</th>
+                                    <th>Budget</th>
+                                    <th>Status</th>
+                                    <th>Deadline</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projectsTableBody">
+                                <tr><td colspan="7" style="text-align: center; padding: var(--space-2xl);"><div class="spinner" style="margin: 0 auto;"></div><p style="margin-top: var(--space-md);">Loading projects...</p></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Project Modal -->
+    <div class="modal-overlay" id="newProjectModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">📁 New Project</h3>
+                <button class="modal-close" onclick="closeModal('newProjectModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group"><label class="form-label">Project Name *</label><input type="text" class="form-input" id="projectName" required></div>
+                <div class="form-group"><label class="form-label">Project Type *</label><select class="form-input form-select" id="projectType" required><option value="">Select type</option><option value="Website">Website</option><option value="E-Commerce">E-Commerce</option><option value="Web App">Web Application</option><option value="Mobile App">Mobile App</option><option value="Custom">Custom</option></select></div>
+                <div class="form-group"><label class="form-label">Description</label><textarea class="form-input form-textarea" id="projectDescription"></textarea></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+                    <div class="form-group"><label class="form-label">Budget ($)</label><input type="number" class="form-input" id="projectBudget"></div>
+                    <div class="form-group"><label class="form-label">Deadline</label><input type="date" class="form-input" id="projectEndDate"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('newProjectModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="submitProject()">Create Project</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Project Modal -->
+    <div class="modal-overlay" id="editProjectModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">✏️ Edit Project</h3>
+                <button class="modal-close" onclick="closeModal('editProjectModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editProjectId">
+                <div class="form-group"><label class="form-label">Status</label><select class="form-input form-select" id="editProjectStatus"><option value="planning">Planning</option><option value="in_progress">In Progress</option><option value="review">Review</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('editProjectModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="updateProject()">Update</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        let currentUser = null;
+        let allProjects = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            await loadProjects();
+            if (currentUser?.role === 'admin') {
+                document.getElementById('adminDivider').style.display = 'block';
+                document.getElementById('usersLink').style.display = 'flex';
+                document.getElementById('analyticsLink').style.display = 'flex';
+            }
+        });
+
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/dashboard-data', { credentials: 'include' });
+                const data = await response.json();
+                if (!data.success) { window.location.href = '/login'; return; }
+                currentUser = data.user;
+                updateUserInfo();
+            } catch (error) { window.location.href = '/login'; }
+        }
+
+        function updateUserInfo() {
+            document.getElementById('userAvatar').textContent = (currentUser.first_name.charAt(0) + currentUser.last_name.charAt(0)).toUpperCase();
+            document.getElementById('userName').textContent = currentUser.first_name + ' ' + currentUser.last_name;
+            document.getElementById('userRole').textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
+        }
+
+        async function loadProjects() {
+            try {
+                const response = await fetch('/api/projects', { credentials: 'include' });
+                const data = await response.json();
+                if (data.success) { allProjects = data.projects; renderProjects(allProjects); }
+            } catch (error) { console.error(error); }
+        }
+
+        function renderProjects(projects) {
+            const tbody = document.getElementById('projectsTableBody');
+            document.getElementById('projectsCount').textContent = `${projects.length} Projects`;
+            if (projects.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: var(--space-2xl);">No projects found</td></tr>'; return; }
+            const statusColors = { 'planning': 'badge-info', 'in_progress': 'badge-primary', 'review': 'badge-warning', 'completed': 'badge-success', 'cancelled': 'badge-danger' };
+            tbody.innerHTML = projects.map(p => `
+                <tr>
+                    <td>#${p.id}</td>
+                    <td><strong>${p.project_name}</strong></td>
+                    <td>${p.project_type}</td>
+                    <td>${p.budget ? '$' + p.budget : '-'}</td>
+                    <td><span class="badge ${statusColors[p.status]}">${p.status.replace('_', ' ')}</span></td>
+                    <td>${p.end_date ? new Date(p.end_date).toLocaleDateString() : '-'}</td>
+                    <td>
+                        <div class="flex gap-sm">
+                            <button class="btn btn-sm btn-ghost" onclick="editProject(${p.id})">✏️</button>
+                            <button class="btn btn-sm btn-ghost" onclick="deleteProject(${p.id})">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function submitProject() {
+            const name = document.getElementById('projectName').value;
+            const type = document.getElementById('projectType').value;
+            if (!name || !type) { showToast('Please fill required fields', 'error'); return; }
+            try {
+                const response = await fetch('/api/projects', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        project_name: name,
+                        project_type: type,
+                        description: document.getElementById('projectDescription').value,
+                        budget: document.getElementById('projectBudget').value,
+                        end_date: document.getElementById('projectEndDate').value
+                    }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success) { showToast('Project created!', 'success'); closeModal('newProjectModal'); loadProjects(); }
+                else { showToast(data.message, 'error'); }
+            } catch (error) { showToast('Error', 'error'); }
+        }
+
+        function editProject(id) {
+            const p = allProjects.find(x => x.id === id);
+            if (!p) return;
+            document.getElementById('editProjectId').value = p.id;
+            document.getElementById('editProjectStatus').value = p.status;
+            openModal('editProjectModal');
+        }
+
+        async function updateProject() {
+            const id = document.getElementById('editProjectId').value;
+            try {
+                const response = await fetch(`/api/projects/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: document.getElementById('editProjectStatus').value }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success) { showToast('Project updated!', 'success'); closeModal('editProjectModal'); loadProjects(); }
+                else { showToast(data.message, 'error'); }
+            } catch (error) { showToast('Error', 'error'); }
+        }
+
+        async function deleteProject(id) {
+            if (!confirm('Delete this project?')) return;
+            try {
+                const response = await fetch(`/api/projects/${id}`, { method: 'DELETE', credentials: 'include' });
+                const data = await response.json();
+                if (data.success) { showToast('Project deleted!', 'success'); loadProjects(); }
+                else { showToast(data.message, 'error'); }
+            } catch (error) { showToast('Error', 'error'); }
+        }
+
+        async function logout() { await fetch('/api/logout', { method: 'POST', credentials: 'include' }); window.location.href = '/login'; }
+        function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow = 'auto'; }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        function showToast(m, t) { const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = `toast toast-${t}`; toast.innerHTML = `<span>${m}</span><button onclick="this.parentElement.remove()" style="margin-left:auto;border:none;background:none;cursor:pointer;">×</button>`; container.appendChild(toast); setTimeout(() => toast.remove(), 5000); }
+    </script>
+</body>
+</html>

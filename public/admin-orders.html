@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management - CodeCraft Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+        
+        * { font-family: 'Outfit', sans-serif; }
+        
+        body { background: #0f0f1a; overflow-x: hidden; }
+        
+        .bg-animation {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+        }
+        
+        .bg-animation::before {
+            content: ''; position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(ellipse at 20% 20%, rgba(245, 158, 11, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+            animation: bgPulse 15s ease-in-out infinite;
+        }
+        
+        @keyframes bgPulse { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(2%, 2%); } }
+        
+        .sidebar {
+            position: fixed !important; width: 280px !important;
+            background: rgba(20, 20, 35, 0.8) !important;
+            backdrop-filter: blur(20px) !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+            height: 100vh !important; z-index: 100;
+            display: flex; flex-direction: column;
+        }
+        
+        .sidebar-logo {
+            padding: 25px !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            display: flex; align-items: center; gap: 15px;
+        }
+        
+        .sidebar-logo-icon {
+            width: 50px; height: 50px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 800; font-size: 1.3rem;
+            box-shadow: 0 8px 32px rgba(245, 158, 11, 0.4);
+        }
+        
+        .sidebar-logo-text { color: white; font-weight: 700; font-size: 1.2rem; }
+        .sidebar-logo-sub { color: rgba(255, 255, 255, 0.5); font-size: 0.75rem; }
+        
+        .sidebar-nav { padding: 20px 15px; flex: 1; overflow-y: auto; }
+        
+        .sidebar-link {
+            display: flex !important; align-items: center; gap: 12px;
+            padding: 14px 18px;
+            color: rgba(255, 255, 255, 0.6) !important;
+            text-decoration: none; border-radius: 12px;
+            margin-bottom: 8px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sidebar-link:hover {
+            background: rgba(245, 158, 11, 0.2) !important;
+            color: white !important; transform: translateX(5px);
+        }
+        
+        .sidebar-link.active {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.4), rgba(217, 119, 6, 0.3)) !important;
+            color: white !important; border-left: 3px solid #f59e0b;
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+        }
+        
+        .sidebar-link i { font-size: 1.1rem; width: 24px; }
+        
+        .sidebar-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            margin: 15px 0;
+        }
+        
+        .sidebar-user {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex; align-items: center; gap: 12px;
+        }
+        
+        .sidebar-avatar {
+            width: 45px; height: 45px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 700; font-size: 1.1rem;
+        }
+        
+        .sidebar-user-name { color: white; font-weight: 600; font-size: 0.95rem; }
+        .sidebar-user-role { color: rgba(255, 255, 255, 0.5); font-size: 0.75rem; }
+        
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .sidebar-footer p {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.7rem;
+            margin: 0;
+        }
+        
+        .main-content {
+            margin-left: 280px !important;
+            min-height: 100vh; position: relative; z-index: 1; padding: 30px;
+        }
+        
+        .header {
+            background: rgba(20, 20, 35, 0.6) !important;
+            backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 20px !important;
+            padding: 25px 30px !important;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header-title h1 { font-size: 1.8rem; font-weight: 700; color: white; margin: 0; }
+        .header-title p { color: rgba(255, 255, 255, 0.5); margin: 5px 0 0 0; font-size: 0.9rem; }
+        
+        .btn-primary-gradient {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none; color: white; padding: 14px 28px;
+            border-radius: 12px; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+        }
+        
+        .btn-primary-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(245, 158, 11, 0.6);
+        }
+        
+        .filters {
+            display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(20, 20, 35, 0.6);
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
+        
+        .filter-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .content-card {
+            background: rgba(20, 20, 35, 0.6) !important;
+            backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 20px !important;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .table-container { overflow-x: auto; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        
+        th, td { padding: 16px 18px; text-align: left; border-bottom: 1px solid rgba(30, 30, 50, 0.8); }
+        
+        th {
+            background: rgba(245, 158, 11, 0.1);
+            font-weight: 600; color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;
+        }
+        
+        td { color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; }
+        
+        tr:hover td { background: rgba(255, 255, 255, 0.03); }
+        tr:last-child td { border-bottom: none; }
+        
+        .badge { padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .badge-pending { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .badge-progress { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .badge-completed { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .badge-cancelled { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .badge-paid { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .badge-unpaid { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .badge-partial { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        
+        .btn { padding: 8px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; transition: all 0.3s; font-size: 0.8rem; }
+        .btn-edit { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .btn-edit:hover { background: rgba(245, 158, 11, 0.4); transform: translateY(-2px); }
+        .btn-delete { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .btn-delete:hover { background: rgba(239, 68, 68, 0.4); transform: translateY(-2px); }
+        
+        .modal {
+            display: none; position: fixed; z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);
+        }
+        
+        .modal-content {
+            background: rgba(30, 30, 50, 0.95);
+            backdrop-filter: blur(20px);
+            margin: 3% auto; border-radius: 20px;
+            width: 90%; max-width: 700px; max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+        }
+        
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .modal-header { padding: 25px 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { margin: 0; font-size: 1.3rem; color: white; }
+        
+        .modal-close {
+            background: rgba(255, 255, 255, 0.1); border: none;
+            width: 36px; height: 36px; border-radius: 10px;
+            cursor: pointer; color: white; font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .modal-close:hover { background: rgba(239, 68, 68, 0.4); transform: rotate(90deg); }
+        .modal-body { padding: 30px; }
+        .modal-footer { padding: 20px 30px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: flex-end; gap: 12px; }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { margin-bottom: 0; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; }
+        
+        .form-control {
+            width: 100%; padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px; color: white; font-size: 0.95rem;
+            transition: all 0.3s; box-sizing: border-box;
+        }
+        
+        .form-control:focus { outline: none; border-color: #f59e0b; background: rgba(245, 158, 11, 0.1); box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2); }
+        .form-control::placeholder { color: rgba(255, 255, 255, 0.3); }
+        
+        select.form-control option { background: #1a1a2e; color: white; }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1); color: white;
+            padding: 14px 28px; border-radius: 12px;
+            font-weight: 600; cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.2); }
+        
+        .empty-state { text-align: center; padding: 60px; color: rgba(255, 255, 255, 0.5); }
+        .empty-state i { font-size: 3rem; margin-bottom: 15px; opacity: 0.5; }
+        
+        .toast {
+            position: fixed; top: 30px; right: 30px;
+            background: rgba(20, 20, 35, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 18px 28px; border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            display: none; z-index: 9999;
+            animation: slideInRight 0.4s ease-out;
+            color: white;
+        }
+        
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 4px; }
+    </style>
+</head>
+
+<body>
+    <div class="bg-animation"></div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">CC</div>
+            <div><div class="sidebar-logo-text">CodeCraft</div><div class="sidebar-logo-sub">Admin Panel</div></div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="/admin" class="sidebar-link"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+            <a href="/admin/messages" class="sidebar-link"><i class="fas fa-envelope"></i><span>Messages</span><span class="msg-badge" id="msgBadge" style="display:none; margin-left: auto; background: #ff6b6b; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem;">0</span></a>
+            <a href="/admin/employees" class="sidebar-link"><i class="fas fa-users"></i><span>Employees</span></a>
+            <a href="/admin/clients" class="sidebar-link"><i class="fas fa-building"></i><span>Clients</span></a>
+            <a href="/admin/payments" class="sidebar-link"><i class="fas fa-credit-card"></i><span>Payments</span></a>
+            <a href="/admin/orders" class="sidebar-link active"><i class="fas fa-clipboard-list"></i><span>Orders</span></a>
+            <a href="/admin/services" class="sidebar-link"><i class="fas fa-tools"></i><span>Services</span></a>
+            <a href="/admin/settings" class="sidebar-link"><i class="fas fa-cog"></i><span>Settings</span></a>
+            <div class="sidebar-divider"></div>
+            <a href="/" class="sidebar-link" target="_blank"><i class="fas fa-globe"></i><span>View Website</span></a>
+            <button onclick="logout()" class="sidebar-link" style="width: 100%; border: none;"><i class="fas fa-sign-out-alt" style="color: #ff6b6b;"></i><span style="color: #ff6b6b;">Logout</span></button>
+        </nav>
+        
+        <div class="sidebar-user">
+            <div class="sidebar-avatar" id="adminAvatar">A</div>
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-name" id="adminName">Admin</div>
+                <div class="sidebar-user-role">Administrator</div>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <p>Developed by M. Ahsan Shah</p>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <header class="header">
+            <div class="header-title">
+                <h1>Order Management</h1>
+                <p>Track and manage all client orders</p>
+            </div>
+            <button class="btn-primary-gradient" onclick="openModal()">
+                <i class="fas fa-plus"></i> New Order
+            </button>
+        </header>
+
+        <div class="filters">
+            <button class="filter-btn active" onclick="filterOrders('all')">All Orders</button>
+            <button class="filter-btn" onclick="filterOrders('Pending')">Pending</button>
+            <button class="filter-btn" onclick="filterOrders('In Progress')">In Progress</button>
+            <button class="filter-btn" onclick="filterOrders('Completed')">Completed</button>
+            <button class="filter-btn" onclick="filterOrders('Cancelled')">Cancelled</button>
+        </div>
+
+        <div class="content-card">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Client</th>
+                            <th>Service</th>
+                            <th>Amount</th>
+                            <th>Order Date</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderTable">
+                        <tr><td colspan="8"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading orders...</p></div></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle"><i class="fas fa-clipboard-list"></i> Create Order</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="orderForm">
+                    <input type="hidden" id="orderId">
+                    <div class="form-group">
+                        <label>Client Name *</label>
+                        <input type="text" id="client_name" class="form-control" placeholder="Enter client name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Service Type *</label>
+                        <input type="text" id="service_type" class="form-control" placeholder="Web Development" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="description" class="form-control" rows="2" placeholder="Order details..."></textarea>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Amount ($) *</label>
+                            <input type="number" id="amount" class="form-control" placeholder="0.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Order Date *</label>
+                            <input type="date" id="order_date" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-grid" id="editFields" style="display: none;">
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select id="status" class="form-control">
+                                <option value="Pending">Pending</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Payment</label>
+                            <select id="payment_status" class="form-control">
+                                <option value="Unpaid">Unpaid</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Partial">Partial</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn-primary-gradient" onclick="saveOrder()">
+                    <i class="fas fa-save"></i> Save Order
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"><span id="toastMsg"></span></div>
+
+    <script>
+        let orders = [], clients = [], editingId = null, currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', () => { checkAuth(); loadData(); loadUser(); });
+
+        async function loadUser() {
+            try {
+                const res = await fetch('/api/check-auth');
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('adminName').textContent = data.user.first_name || 'Admin';
+                    document.getElementById('adminAvatar').textContent = (data.user.first_name || 'A').charAt(0);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/check-auth');
+                const data = await res.json();
+                if (!data.success || data.user.role !== 'admin') window.location.href = '/login';
+            } catch (e) { window.location.href = '/login'; }
+        }
+
+        async function loadData() { await loadOrders(); }
+
+        async function loadOrders() {
+            try {
+                const res = await fetch('/api/orders');
+                const data = await res.json();
+                if (data.success) { orders = data.orders; renderTable(); }
+            } catch (e) { showToast('Error loading orders', 'error'); }
+        }
+
+        function filterOrders(status) {
+            currentFilter = status;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderTable();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('orderTable');
+            let filtered = currentFilter === 'all' ? orders : orders.filter(o => o.status === currentFilter);
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-clipboard-list"></i><p>No orders found</p></div></td></tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = filtered.map(o => `
+                <tr>
+                    <td style="color: #f59e0b; font-weight: 600;">#${o.id}</td>
+                    <td><strong style="color: white;">${o.client_name || 'N/A'}</strong></td>
+                    <td>${o.service_type || '-'}</td>
+                    <td style="color: #10b981; font-weight: 700;">$${parseFloat(o.amount || 0).toLocaleString()}</td>
+                    <td>${o.order_date || '-'}</td>
+                    <td><span class="badge badge-${getStatusClass(o.status)}">${o.status || 'Pending'}</span></td>
+                    <td><span class="badge badge-${getPaymentClass(o.payment_status)}">${o.payment_status || 'Unpaid'}</span></td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editOrder(${o.id})"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-delete" onclick="deleteOrder(${o.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatusClass(status) {
+            if (status === 'Pending') return 'pending';
+            if (status === 'In Progress') return 'progress';
+            if (status === 'Completed') return 'completed';
+            return 'cancelled';
+        }
+
+        function getPaymentClass(status) {
+            if (status === 'Paid') return 'paid';
+            if (status === 'Unpaid') return 'unpaid';
+            return 'partial';
+        }
+
+        function openModal() {
+            editingId = null;
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-clipboard-list"></i> Create Order';
+            document.getElementById('orderForm').reset();
+            document.getElementById('orderId').value = '';
+            document.getElementById('editFields').style.display = 'none';
+            document.getElementById('order_date').valueAsDate = new Date();
+            document.getElementById('orderModal').style.display = 'block';
+        }
+
+        function closeModal() { document.getElementById('orderModal').style.display = 'none'; }
+
+        function editOrder(id) {
+            const order = orders.find(o => o.id === id);
+            if (!order) return;
+            editingId = id;
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Edit Order';
+            document.getElementById('orderId').value = order.id;
+            document.getElementById('client_name').value = order.client_name || '';
+            document.getElementById('service_type').value = order.service_type || '';
+            document.getElementById('description').value = order.description || '';
+            document.getElementById('amount').value = order.amount || '';
+            document.getElementById('order_date').value = order.order_date || '';
+            document.getElementById('status').value = order.status || 'Pending';
+            document.getElementById('payment_status').value = order.payment_status || 'Unpaid';
+            document.getElementById('editFields').style.display = 'grid';
+            document.getElementById('orderModal').style.display = 'block';
+        }
+
+        async function saveOrder() {
+            const data = {
+                client_name: document.getElementById('client_name').value,
+                service_type: document.getElementById('service_type').value,
+                description: document.getElementById('description').value,
+                amount: document.getElementById('amount').value,
+                order_date: document.getElementById('order_date').value,
+                status: document.getElementById('status').value,
+                payment_status: document.getElementById('payment_status').value
+            };
+
+            if (!data.client_name || !data.service_type || !data.amount || !data.order_date) {
+                showToast('Please fill all required fields', 'error');
+                return;
+            }
+
+            try {
+                const url = editingId ? `/api/orders/${editingId}` : '/api/orders';
+                const method = editingId ? 'PUT' : 'POST';
+                const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                const result = await res.json();
+                if (result.success) {
+                    showToast(editingId ? 'Order updated!' : 'Order created!');
+                    closeModal(); loadOrders();
+                } else { showToast(result.message, 'error'); }
+            } catch (e) { showToast('Error saving order', 'error'); }
+        }
+
+        async function deleteOrder(id) {
+            if (!confirm('Delete this order?')) return;
+            try {
+                const res = await fetch(`/api/orders/${id}`, { method: 'DELETE' });
+                const result = await res.json();
+                if (result.success) { showToast('Order deleted!'); loadOrders(); }
+                else { showToast(result.message, 'error'); }
+            } catch (e) { showToast('Error deleting order', 'error'); }
+        }
+
+        async function logout() { await fetch('/api/logout', { method: 'POST' }); window.location.href = '/login'; }
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.style.borderLeft = type === 'error' ? '4px solid #ef4444' : '4px solid #10b981';
+            document.getElementById('toastMsg').textContent = msg;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        }
+
+        window.onclick = function(e) { if (e.target.classList.contains('modal')) closeModal(); }
+    </script>
+</body>
+</html>

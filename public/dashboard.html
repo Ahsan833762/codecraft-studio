@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - CodeCraft Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&lt;/&gt;</text></svg>">
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">CC</div>
+            <span class="sidebar-logo-text">CodeCraft</span>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="/dashboard" class="sidebar-link active">
+                <span class="sidebar-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="/customer-services" class="sidebar-link">
+                <span class="sidebar-icon">🎫</span>
+                <span>Services</span>
+            </a>
+            <a href="/projects" class="sidebar-link">
+                <span class="sidebar-icon">📁</span>
+                <span>Projects</span>
+            </a>
+            <a href="/messages" class="sidebar-link">
+                <span class="sidebar-icon">💬</span>
+                <span>Messages</span>
+            </a>
+            
+            <div class="sidebar-divider"></div>
+            
+            <a href="/profile" class="sidebar-link">
+                <span class="sidebar-icon">👤</span>
+                <span>Profile</span>
+            </a>
+            <a href="/settings" class="sidebar-link">
+                <span class="sidebar-icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+            
+            <div class="sidebar-divider" id="adminDivider" style="display: none;"></div>
+            
+            <a href="/users" class="sidebar-link" id="usersLink" style="display: none;">
+                <span class="sidebar-icon">👥</span>
+                <span>Users</span>
+            </a>
+            <a href="/analytics" class="sidebar-link" id="analyticsLink" style="display: none;">
+                <span class="sidebar-icon">📈</span>
+                <span>Analytics</span>
+            </a>
+            
+            <div class="sidebar-divider"></div>
+            
+            <a href="/" class="sidebar-link" target="_blank">
+                <span class="sidebar-icon">🌐</span>
+                <span>View Website</span>
+            </a>
+            
+            <button class="sidebar-link" onclick="logout()" style="width: 100%; text-align: left; border: none; background: none; cursor: pointer;">
+                <span class="sidebar-icon">🚪</span>
+                <span>Logout</span>
+            </button>
+        </nav>
+        
+        <div class="sidebar-user" id="sidebarUser">
+            <div class="avatar" id="userAvatar">U</div>
+            <div>
+                <div style="font-weight: 600; font-size: 0.9rem;" id="userName">User Name</div>
+                <div style="font-size: 0.8rem; opacity: 0.7;" id="userRole">User</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="flex items-center gap-lg">
+                <button class="mobile-toggle" onclick="toggleSidebar()" style="display: none;">
+                    <span style="font-size: 1.5rem;">☰</span>
+                </button>
+                <div>
+                    <h1 class="page-title">Dashboard</h1>
+                    <p class="page-subtitle">Welcome back! Here's your overview</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-md">
+                <button class="btn btn-icon btn-ghost" onclick="showNotifications()" style="position: relative;">
+                    <span>🔔</span>
+                    <span id="notificationBadge" style="position: absolute; top: 5px; right: 5px; width: 8px; height: 8px; background: var(--accent-red); border-radius: 50%; display: none;"></span>
+                </button>
+                <button class="btn btn-icon btn-ghost" onclick="showSearch()">
+                    <span>🔍</span>
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-primary" onclick="toggleDropdown()">
+                        <span>+ New</span>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item" onclick="openModal('serviceModal')">
+                            <span>🎫</span> New Service Request
+                        </a>
+                        <a href="#" class="dropdown-item" onclick="openModal('projectModal')">
+                            <span>📁</span> New Project
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" onclick="openModal('messageModal')">
+                            <span>💬</span> Send Message
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <main class="main-content">
+            <!-- Stats Grid -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card animate-fade-in-up stagger-1">
+                    <div class="stat-icon primary">📊</div>
+                    <div class="stat-value" id="statProjects">0</div>
+                    <div class="stat-label">Total Projects</div>
+                </div>
+                <div class="stat-card animate-fade-in-up stagger-2">
+                    <div class="stat-icon success">🎫</div>
+                    <div class="stat-value" id="statServices">0</div>
+                    <div class="stat-label">Service Requests</div>
+                </div>
+                <div class="stat-card animate-fade-in-up stagger-3">
+                    <div class="stat-icon warning">💬</div>
+                    <div class="stat-value" id="statMessages">0</div>
+                    <div class="stat-label">Messages</div>
+                </div>
+                <div class="stat-card animate-fade-in-up stagger-4">
+                    <div class="stat-icon danger">🔔</div>
+                    <div class="stat-value" id="statUnread">0</div>
+                    <div class="stat-label">Unread Messages</div>
+                </div>
+            </div>
+
+            <!-- Package Status -->
+            <div class="package-status-card" id="packageStatusCard" style="display: none;">
+                <div class="package-status-header">
+                    <h3 class="package-name" id="packageName">Starter Plan</h3>
+                    <span class="package-badge" id="packageBadge">Premium</span>
+                </div>
+                <p class="package-expiry" id="packageExpiry">Expires: <strong>Jan 1, 2025</strong></p>
+                <div class="package-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="packageProgress" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-label">
+                        <span id="packageDaysLeft">0 days remaining</span>
+                        <span id="packageTotalDays">365 days</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="dashboard-grid" style="margin-bottom: var(--space-xl);">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🎯 Quick Actions</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md);">
+                            <button class="btn btn-secondary" onclick="openModal('serviceModal')">
+                                <span>🎫</span> New Request
+                            </button>
+                            <button class="btn btn-secondary" onclick="openModal('projectModal')">
+                                <span>📁</span> New Project
+                            </button>
+                            <button class="btn btn-secondary" onclick="openModal('messageModal')">
+                                <span>💬</span> Send Message
+                            </button>
+                            <button class="btn btn-secondary" onclick="window.location.href='/profile'">
+                                <span>👤</span> View Profile
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">ℹ️ System Status</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="flex justify-between items-center" style="padding: var(--space-sm) 0;">
+                            <span>Database</span>
+                            <span class="badge badge-success">Connected</span>
+                        </div>
+                        <div class="flex justify-between items-center" style="padding: var(--space-sm) 0;">
+                            <span>API Server</span>
+                            <span class="badge badge-success">Online</span>
+                        </div>
+                        <div class="flex justify-between items-center" style="padding: var(--space-sm) 0;">
+                            <span>Session</span>
+                            <span class="badge badge-success">Active</span>
+                        </div>
+                        <div class="flex justify-between items-center" style="padding: var(--space-sm) 0;">
+                            <span>Version</span>
+                            <span class="badge badge-primary">v1.0.0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="card-header flex justify-between items-center">
+                    <h3 class="card-title">📋 Recent Activity</h3>
+                    <button class="btn btn-sm btn-ghost" onclick="loadActivities()">Refresh</button>
+                </div>
+                <div class="card-body">
+                    <div class="activity-list" id="activityList">
+                        <div style="text-align: center; padding: var(--space-xl); color: var(--gray-500);">
+                            <div class="spinner" style="margin: 0 auto;"></div>
+                            <p style="margin-top: var(--space-md);">Loading activities...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Service Request Modal -->
+    <div class="modal-overlay" id="serviceModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">🎫 New Service Request</h3>
+                <button class="modal-close" onclick="closeModal('serviceModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="serviceForm">
+                    <div class="form-group">
+                        <label class="form-label">Service Type</label>
+                        <select class="form-input form-select" id="serviceType" required>
+                            <option value="">Select service type</option>
+                            <option value="Web Development">Web Development</option>
+                            <option value="E-Commerce">E-Commerce Solutions</option>
+                            <option value="Mobile App">Mobile App Development</option>
+                            <option value="UI/UX Design">UI/UX Design</option>
+                            <option value="SEO Optimization">SEO Optimization</option>
+                            <option value="Maintenance">Website Maintenance</option>
+                            <option value="Consultation">Consultation</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-input form-textarea" id="serviceDescription" placeholder="Describe your requirements..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Priority</label>
+                        <select class="form-input form-select" id="servicePriority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('serviceModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="submitService()">Submit Request</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Modal -->
+    <div class="modal-overlay" id="projectModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">📁 New Project</h3>
+                <button class="modal-close" onclick="closeModal('projectModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="projectForm">
+                    <div class="form-group">
+                        <label class="form-label">Project Name</label>
+                        <input type="text" class="form-input" id="projectName" placeholder="Enter project name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Project Type</label>
+                        <select class="form-input form-select" id="projectType" required>
+                            <option value="">Select type</option>
+                            <option value="Website">Website</option>
+                            <option value="E-Commerce">E-Commerce</option>
+                            <option value="Web App">Web Application</option>
+                            <option value="Mobile App">Mobile App</option>
+                            <option value="Custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-input form-textarea" id="projectDescription" placeholder="Project details..."></textarea>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+                        <div class="form-group">
+                            <label class="form-label">Budget ($)</label>
+                            <input type="number" class="form-input" id="projectBudget" placeholder="5000">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Timeline</label>
+                            <input type="date" class="form-input" id="projectEndDate">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('projectModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="submitProject()">Create Project</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Modal -->
+    <div class="modal-overlay" id="messageModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">💬 Send Message</h3>
+                <button class="modal-close" onclick="closeModal('messageModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="messageForm">
+                    <div class="form-group">
+                        <label class="form-label">To</label>
+                        <select class="form-input form-select" id="messageTo" required>
+                            <option value="">Select recipient</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Subject</label>
+                        <input type="text" class="form-input" id="messageSubject" placeholder="Enter subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-input form-textarea" id="messageContent" placeholder="Write your message..." required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('messageModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="sendMessage()">Send Message</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Global user data
+        let currentUser = null;
+
+        // Initialize Dashboard
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            await loadDashboardData();
+            await loadPackageStatus();
+            await loadRecentActivities();
+            await loadMessageRecipients();
+            
+            // Show admin links if admin
+            if (currentUser && currentUser.role === 'admin') {
+                document.getElementById('adminDivider').style.display = 'block';
+                document.getElementById('usersLink').style.display = 'flex';
+                document.getElementById('analyticsLink').style.display = 'flex';
+            }
+        });
+
+        // Check Authentication
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/dashboard-data', { credentials: 'include' });
+                const data = await response.json();
+                
+                if (!data.success) {
+                    window.location.href = '/login';
+                    return;
+                }
+                
+                currentUser = data.user;
+                updateUserInfo();
+            } catch (error) {
+                window.location.href = '/login';
+            }
+        }
+
+        // Update User Info
+        function updateUserInfo() {
+            const initials = currentUser.first_name.charAt(0) + currentUser.last_name.charAt(0);
+            document.getElementById('userAvatar').textContent = initials.toUpperCase();
+            document.getElementById('userName').textContent = currentUser.first_name + ' ' + currentUser.last_name;
+            document.getElementById('userRole').textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
+        }
+
+        // Load Dashboard Data
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('/api/dashboard-data', { credentials: 'include' });
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('statProjects').textContent = data.data.my_projects || 0;
+                    document.getElementById('statServices').textContent = data.data.my_services || 0;
+                    document.getElementById('statMessages').textContent = data.data.my_messages || 0;
+                    document.getElementById('statUnread').textContent = data.data.unread_messages || 0;
+                    
+                    if (data.data.unread_messages > 0) {
+                        document.getElementById('notificationBadge').style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                showToast('Error loading dashboard data', 'error');
+            }
+        }
+
+        // Load Package Status
+        async function loadPackageStatus() {
+            try {
+                const response = await fetch('/api/user-packages', { credentials: 'include' });
+                const data = await response.json();
+                
+                const packageCard = document.getElementById('packageStatusCard');
+                
+                if (data.success && data.packages && data.packages.length > 0) {
+                    const activePackage = data.packages.find(p => p.status === 'active' || p.status === 'trial');
+                    
+                    if (activePackage) {
+                        packageCard.style.display = 'block';
+                        
+                        document.getElementById('packageName').textContent = activePackage.package_name + ' Plan';
+                        
+                        const badge = document.getElementById('packageBadge');
+                        if (activePackage.is_trial) {
+                            badge.textContent = 'Free Trial';
+                            badge.className = 'package-badge trial';
+                        } else {
+                            badge.textContent = 'Premium';
+                            badge.className = 'package-badge premium';
+                        }
+                        
+                        const endDate = new Date(activePackage.end_date);
+                        const startDate = new Date(activePackage.start_date);
+                        const now = new Date();
+                        
+                        document.getElementById('packageExpiry').innerHTML = `Expires: <strong>${endDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</strong>`;
+                        
+                        const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+                        const daysLeft = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+                        const progressPercent = Math.max(0, Math.min(100, ((totalDays - daysLeft) / totalDays) * 100));
+                        
+                        document.getElementById('packageProgress').style.width = progressPercent + '%';
+                        document.getElementById('packageDaysLeft').textContent = daysLeft > 0 ? daysLeft + ' days remaining' : 'Expired';
+                        document.getElementById('packageTotalDays').textContent = totalDays + ' days';
+                    } else {
+                        packageCard.style.display = 'none';
+                    }
+                } else {
+                    packageCard.style.display = 'none';
+                }
+            } catch (error) {
+                console.log('No package found');
+            }
+        }
+
+        // Load Recent Activities
+        async function loadActivities() {
+            const activityList = document.getElementById('activityList');
+            
+            try {
+                const response = await fetch('/api/customer-services', { credentials: 'include' });
+                const data = await response.json();
+                
+                if (data.success && data.services.length > 0) {
+                    let html = '';
+                    data.services.slice(0, 5).forEach(service => {
+                        const statusColors = {
+                            'open': 'badge-warning',
+                            'in_progress': 'badge-primary',
+                            'resolved': 'badge-success',
+                            'closed': 'badge-info'
+                        };
+                        
+                        html += `
+                            <div class="activity-item">
+                                <div class="activity-icon">🎫</div>
+                                <div class="activity-content">
+                                    <div class="activity-title">${service.service_type}</div>
+                                    <div class="activity-desc">${service.service_description.substring(0, 60)}...</div>
+                                    <div class="activity-time">${new Date(service.created_at).toLocaleDateString()} • <span class="badge ${statusColors[service.status]}">${service.status}</span></div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    activityList.innerHTML = html;
+                } else {
+                    activityList.innerHTML = `
+                        <div style="text-align: center; padding: var(--space-xl); color: var(--gray-500);">
+                            <p>No recent activities</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                activityList.innerHTML = `
+                    <div style="text-align: center; padding: var(--space-xl); color: var(--gray-500);">
+                        <p>Error loading activities</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load Message Recipients
+        async function loadMessageRecipients() {
+            try {
+                const response = await fetch('/api/users', { credentials: 'include' });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const select = document.getElementById('messageTo');
+                    data.users.forEach(user => {
+                        if (user.id !== currentUser.id) {
+                            const option = document.createElement('option');
+                            option.value = user.id;
+                            option.textContent = `${user.first_name} ${user.last_name} (${user.email})`;
+                            select.appendChild(option);
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading recipients:', error);
+            }
+        }
+
+        // Submit Service Request
+        async function submitService() {
+            const serviceType = document.getElementById('serviceType').value;
+            const serviceDescription = document.getElementById('serviceDescription').value;
+            const servicePriority = document.getElementById('servicePriority').value;
+            
+            if (!serviceType || !serviceDescription) {
+                showToast('Please fill all required fields', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/customer-services', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        service_type: serviceType,
+                        service_description: serviceDescription,
+                        priority: servicePriority
+                    }),
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Service request submitted successfully!', 'success');
+                    closeModal('serviceModal');
+                    document.getElementById('serviceForm').reset();
+                    loadActivities();
+                } else {
+                    showToast(data.message || 'Error submitting request', 'error');
+                }
+            } catch (error) {
+                showToast('Error submitting request', 'error');
+            }
+        }
+
+        // Submit Project
+        async function submitProject() {
+            const projectName = document.getElementById('projectName').value;
+            const projectType = document.getElementById('projectType').value;
+            const projectDescription = document.getElementById('projectDescription').value;
+            const projectBudget = document.getElementById('projectBudget').value;
+            const projectEndDate = document.getElementById('projectEndDate').value;
+            
+            if (!projectName || !projectType) {
+                showToast('Please fill all required fields', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/projects', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        project_name: projectName,
+                        project_type: projectType,
+                        description: projectDescription,
+                        budget: projectBudget,
+                        end_date: projectEndDate
+                    }),
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Project created successfully!', 'success');
+                    closeModal('projectModal');
+                    document.getElementById('projectForm').reset();
+                    loadDashboardData();
+                } else {
+                    showToast(data.message || 'Error creating project', 'error');
+                }
+            } catch (error) {
+                showToast('Error creating project', 'error');
+            }
+        }
+
+        // Send Message
+        async function sendMessage() {
+            const toUserId = document.getElementById('messageTo').value;
+            const subject = document.getElementById('messageSubject').value;
+            const message = document.getElementById('messageContent').value;
+            
+            if (!toUserId || !subject || !message) {
+                showToast('Please fill all required fields', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to_user_id: toUserId,
+                        subject: subject,
+                        message: message
+                    }),
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Message sent successfully!', 'success');
+                    closeModal('messageModal');
+                    document.getElementById('messageForm').reset();
+                } else {
+                    showToast(data.message || 'Error sending message', 'error');
+                }
+            } catch (error) {
+                showToast('Error sending message', 'error');
+            }
+        }
+
+        // Logout
+        async function logout() {
+            try {
+                const response = await fetch('/api/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                window.location.href = '/login';
+            } catch (error) {
+                window.location.href = '/login';
+            }
+        }
+
+        // Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+
+        // Dropdown Functions
+        function toggleDropdown() {
+            const dropdown = document.querySelector('.dropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Close dropdown on outside click
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+            }
+        });
+
+        // Sidebar Toggle (Mobile)
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Show Notifications
+        function showNotifications() {
+            window.location.href = '/messages';
+        }
+
+        // Show Search
+        function showSearch() {
+            showToast('Search feature coming soon!', 'info');
+        }
+
+        // Toast Notification
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()" style="margin-left: auto; border: none; background: none; cursor: pointer; font-size: 1.25rem;">×</button>
+            `;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+
+</html>

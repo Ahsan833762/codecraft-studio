@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeCraft Studio | Professional Web Development</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&lt;/&gt;</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .logo-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: #6366f1;
+        }
+        
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #6366f1;
+            border: 2px solid #6366f1;
+        }
+        
+        .btn-secondary:hover {
+            background: #6366f1;
+            color: white;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 180px 5% 100px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Hero Right Side - Browser Mockup with Floating Badges */
+        .hero-visual {
+            position: relative;
+            height: 500px;
+        }
+        
+        .browser-mockup {
+            background: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            animation: float 6s ease-in-out infinite;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .browser-header {
+            background: #f3f4f6;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .browser-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .browser-dots span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #d1d5db;
+        }
+        
+        .browser-dots span:nth-child(1) { background: #ff5f56; }
+        .browser-dots span:nth-child(2) { background: #ffbd2e; }
+        .browser-dots span:nth-child(3) { background: #27c93f; }
+        
+        .browser-url {
+            flex: 1;
+            background: #ffffff;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .browser-content {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .content-block {
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            border-radius: 0.75rem;
+            opacity: 0.8;
+        }
+        
+        .block-1 { height: 60px; }
+        
+        .content-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .block-2, .block-3 { height: 100px; }
+        .block-4 { height: 80px; }
+        
+        .floating-badge {
+            position: absolute;
+            background: #ffffff;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: float 4s ease-in-out infinite;
+            z-index: 3;
+        }
+        
+        .badge-1 {
+            top: 10%;
+            right: -10%;
+            animation-delay: 1s;
+        }
+        
+        .badge-2 {
+            bottom: 15%;
+            left: -10%;
+            animation-delay: 2s;
+        }
+        
+        .badge-number {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .badge-text {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: #6366f1;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.1);
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: #1e293b;
+        }
+        
+        .hero-title .highlight {
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        
+        .hero-features {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .hero-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+        }
+        
+        .hero-feature-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+        
+        /* Services Section */
+        .services-preview {
+            padding: 100px 5%;
+            background: white;
+        }
+        
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 4rem;
+        }
+        
+        .section-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+            color: #6366f1;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+        
+        .section-subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+        
+        .services-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .service-card {
+            background: #f8fafc;
+            padding: 2.5rem;
+            border-radius: 20px;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: #6366f1;
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.1);
+        }
+        
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+        
+        .service-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+        
+        .service-desc {
+            color: #64748b;
+            margin-bottom: 1.5rem;
+        }
+        
+        .service-link {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .service-link:hover {
+            gap: 12px;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 5%;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+            text-align: center;
+        }
+        
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn-white {
+            background: white;
+            color: #6366f1;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .btn-white:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Footer */
+        .footer {
+            background: #1e293b;
+            color: white;
+            padding: 60px 5% 30px;
+        }
+        
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-desc {
+            color: #94a3b8;
+            line-height: 1.8;
+        }
+        
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid #334155;
+            padding-top: 2rem;
+            text-align: center;
+            color: #94a3b8;
+        }
+        
+        /* Responsive */
+        @media (max-width: 968px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+            
+            .hero-features {
+                justify-content: center;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+        }
+        
+        /* User Dropdown */
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .user-dropdown-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .user-dropdown-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+        }
+        
+        .user-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 10px;
+            background: white;
+            min-width: 200px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            z-index: 1001;
+            overflow: hidden;
+        }
+        
+        .user-dropdown-content.show {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        .user-dropdown-header {
+            padding: 15px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+        }
+        
+        .user-dropdown-header .user-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        .user-dropdown-header .user-email {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+        
+        .user-dropdown-item {
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            font-size: 0.95rem;
+        }
+        
+        .user-dropdown-item:hover {
+            background: #f1f5f9;
+            color: #6366f1;
+        }
+        
+        .user-dropdown-item.logout {
+            color: #ef4444;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .user-dropdown-item.logout:hover {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">CC</div>
+                <span class="logo-text">CodeCraft Studio</span>
+            </a>
+            <div class="nav-menu">
+                <a href="/" class="nav-link active">Home</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/services" class="nav-link">Services</a>
+                <a href="/portfolio" class="nav-link">Portfolio</a>
+                <a href="/process" class="nav-link">Process</a>
+                <a href="/pricing" class="nav-link">Pricing</a>
+                <a href="/contact" class="nav-link">Contact</a>
+            </div>
+            <div class="nav-actions" id="navActions">
+                <a href="/login" class="btn btn-secondary">Login</a>
+                <a href="/signup" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span>⭐</span>
+                    Award-Winning Web Development
+                </div>
+                <h1 class="hero-title">
+                    We Build <span class="highlight">Stunning Websites</span> That Drive Results
+                </h1>
+                <p class="hero-subtitle">
+                    Transform your business with custom web solutions tailored to your needs. From concept to launch, we create responsive, high-performance websites that engage users and boost conversions.
+                </p>
+                <div class="hero-buttons">
+                    <a href="/signup" class="btn btn-primary">Start Your Project</a>
+                    <a href="/portfolio" class="btn btn-secondary">View Our Work</a>
+                </div>
+                <div class="hero-features">
+                    <div class="hero-feature">
+                        <div class="hero-feature-icon">✓</div>
+                        <span>100% Custom Design</span>
+                    </div>
+                    <div class="hero-feature">
+                        <div class="hero-feature-icon">✓</div>
+                        <span>Mobile Responsive</span>
+                    </div>
+                    <div class="hero-feature">
+                        <div class="hero-feature-icon">✓</div>
+                        <span>SEO Optimized</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <!-- Browser Mockup -->
+                <div class="browser-mockup">
+                    <div class="browser-header">
+                        <div class="browser-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <div class="browser-url">www.yourwebsite.com</div>
+                    </div>
+                    <div class="browser-content">
+                        <div class="content-block block-1"></div>
+                        <div class="content-row">
+                            <div class="content-block block-2"></div>
+                            <div class="content-block block-3"></div>
+                        </div>
+                        <div class="content-block block-4"></div>
+                    </div>
+                </div>
+                <!-- Floating Badges -->
+                <div class="floating-badge badge-1">
+                    <span class="badge-number">500+</span>
+                    <span class="badge-text">Projects</span>
+                </div>
+                <div class="floating-badge badge-2">
+                    <span class="badge-number">98%</span>
+                    <span class="badge-text">Satisfaction</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="services-preview">
+        <div class="section-header">
+            <span class="section-tag">Our Services</span>
+            <h2 class="section-title">Comprehensive Web Solutions</h2>
+            <p class="section-subtitle">We offer end-to-end web development services to help your business thrive in the digital landscape.</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-laptop-code"></i>
+                </div>
+                <h3 class="service-title">Web Development</h3>
+                <p class="service-desc">Custom websites built with modern technologies for optimal performance and scalability.</p>
+                <a href="/services" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-paint-brush"></i>
+                </div>
+                <h3 class="service-title">UI/UX Design</h3>
+                <p class="service-desc">Beautiful, intuitive designs that provide exceptional user experiences.</p>
+                <a href="/services" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h3 class="service-title">E-Commerce</h3>
+                <p class="service-desc">Powerful online stores that drive sales and delight customers.</p>
+                <a href="/services" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3 class="service-title">SEO Services</h3>
+                <p class="service-desc">Improve your visibility and attract more organic traffic to your website.</p>
+                <a href="/services" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <h2 class="cta-title">Ready to Transform Your Online Presence?</h2>
+        <p class="cta-subtitle">Let's discuss your project and create something amazing together.</p>
+        <a href="/contact" class="btn btn-white">Get a Free Quote</a>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <div class="logo-icon">CC</div>
+                    <span class="logo-text">CodeCraft Studio</span>
+                </div>
+                <p class="footer-desc">Professional web development services tailored to your business needs. We turn ideas into powerful digital solutions.</p>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-title">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/services">Services</a></li>
+                    <li><a href="/portfolio">Portfolio</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-title">Services</h4>
+                <ul class="footer-links">
+                    <li><a href="/services">Web Development</a></li>
+                    <li><a href="/services">UI/UX Design</a></li>
+                    <li><a href="/services">E-Commerce</a></li>
+                    <li><a href="/services">SEO</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-title">Contact</h4>
+                <ul class="footer-links">
+                    <li><a href="/contact">Get in Touch</a></li>
+                    <li><a href="/pricing">Pricing</a></li>
+                    <li><a href="/process">Our Process</a></li>
+                    <li><a href="/login">Login</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 CodeCraft Studio. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Check user login status and update navbar
+        async function updateNavbar() {
+            try {
+                const response = await fetch('/api/user');
+                const data = await response.json();
+                const navActions = document.getElementById('navActions');
+                
+                if (data.success && data.user) {
+                    // User is logged in - show user dropdown
+                    navActions.innerHTML = `
+                        <div class="user-dropdown">
+                            <button class="user-dropdown-btn" onclick="toggleDropdown(event)">
+                                <i class="fas fa-user-circle"></i>
+                                <span>${data.user.first_name}</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="user-dropdown-content" id="userDropdown">
+                                <div class="user-dropdown-header">
+                                    <div class="user-name">${data.user.first_name} ${data.user.last_name || ''}</div>
+                                    <div class="user-email">${data.user.email}</div>
+                                </div>
+                                <a href="/profile" class="user-dropdown-item">
+                                    <i class="fas fa-user"></i> My Profile
+                                </a>
+                                <a href="/dashboard" class="user-dropdown-item">
+                                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                                </a>
+                                <button onclick="logout()" class="user-dropdown-item logout">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+                // If not logged in, keep default Login/Signup buttons
+            } catch (error) {
+                console.error('Error checking user status:', error);
+            }
+        }
+        
+        // Toggle dropdown - Click based
+        function toggleDropdown(e) {
+            if (e) e.stopPropagation();
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+        
+        // Prevent dropdown from closing when clicking inside it
+        document.getElementById('userDropdown')?.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdown = document.querySelector('.user-dropdown');
+            if (dropdown && !dropdown.contains(e.target)) {
+                const dropdownContent = document.getElementById('userDropdown');
+                if (dropdownContent) {
+                    dropdownContent.classList.remove('show');
+                }
+            }
+        });
+        
+        // Logout function
+        async function logout() {
+            try {
+                const response = await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    window.location.href = '/';
+                }
+            } catch (error) {
+                console.error('Error logging out:', error);
+            }
+        }
+        
+        // Initialize navbar on page load
+        updateNavbar();
+        
+        // Mobile menu toggle
+        const navMenu = document.querySelector('.nav-menu');
+        
+        // Add smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
+            } else {
+                navbar.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.05)';
+            }
+        });
+    </script>
+</body>
+</html>

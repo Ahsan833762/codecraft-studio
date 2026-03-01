@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CodeCraft Studio</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+        }
+        
+        /* Animated Background */
+        body {
+            background: #0f0f1a;
+            overflow-x: hidden;
+        }
+        
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 40% 60%, rgba(139, 92, 246, 0.1) 0%, transparent 40%);
+            animation: bgPulse 15s ease-in-out infinite;
+        }
+        
+        @keyframes bgPulse {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(2%, 2%) rotate(1deg); }
+            66% { transform: translate(-1%, 1%) rotate(-1deg); }
+        }
+        
+        /* Floating Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: rgba(99, 102, 241, 0.3);
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: rgba(236, 72, 153, 0.25);
+            top: 60%;
+            right: 10%;
+            animation-delay: -5s;
+        }
+        
+        .orb-3 {
+            width: 250px;
+            height: 250px;
+            background: rgba(139, 92, 246, 0.2);
+            bottom: 20%;
+            left: 30%;
+            animation-delay: -10s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            25% { transform: translateY(-20px) scale(1.05); }
+            50% { transform: translateY(0) scale(1); }
+            75% { transform: translateY(20px) scale(0.95); }
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            position: fixed !important;
+            width: 280px !important;
+            background: rgba(20, 20, 35, 0.8) !important;
+            backdrop-filter: blur(20px) !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+            height: 100vh !important;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 60px;
+        }
+        
+        .sidebar-logo {
+            padding: 25px !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .sidebar-logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 50%, #f59e0b 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 1.3rem;
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4);
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes logoGlow {
+            0%, 100% { box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4); }
+            50% { box-shadow: 0 8px 32px rgba(236, 72, 153, 0.6); }
+        }
+        
+        .sidebar-logo-text {
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .sidebar-logo-sub {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.75rem;
+        }
+        
+        .sidebar-nav {
+            padding: 20px 15px;
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #6366f1 rgba(30, 30, 50, 0.8);
+        }
+        
+        .sidebar-nav::-webkit-scrollbar {
+            width: 8px;
+        }
+        .sidebar-nav::-webkit-scrollbar-track {
+            background: rgba(30, 30, 50, 0.8);
+            border-radius: 4px;
+        }
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+        }
+        .sidebar-nav::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed, #db2777);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.7);
+        }
+        
+        .sidebar-link {
+            display: flex !important;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            color: rgba(255, 255, 255, 0.6) !important;
+            text-decoration: none;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sidebar-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .sidebar-link:hover::before {
+            left: 100%;
+        }
+        
+        .sidebar-link:hover {
+            background: rgba(99, 102, 241, 0.2) !important;
+            color: white !important;
+            transform: translateX(5px);
+        }
+        
+        .sidebar-link.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(139, 92, 246, 0.3)) !important;
+            color: white !important;
+            border-left: 3px solid #6366f1;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .sidebar-link i {
+            font-size: 1.1rem;
+            width: 24px;
+        }
+        
+        .sidebar-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            margin: 15px 0;
+        }
+        
+        .sidebar-user {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .sidebar-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+        
+        .sidebar-user-info {
+            flex: 1;
+        }
+        
+        .sidebar-user-name {
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        .sidebar-user-role {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.75rem;
+        }
+        
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .sidebar-footer p {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.7rem;
+            margin: 0;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 280px !important;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+            padding: 30px;
+        }
+        
+        /* Header */
+        .header {
+            background: rgba(20, 20, 35, 0.6) !important;
+            backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 20px !important;
+            padding: 25px 30px !important;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header-title h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            margin: 0;
+            background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.7));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header-title p {
+            color: rgba(255, 255, 255, 0.5);
+            margin: 5px 0 0 0;
+            font-size: 0.9rem;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-glass:hover {
+            background: rgba(99, 102, 241, 0.3);
+            border-color: rgba(99, 102, 241, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-primary-gradient {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+        }
+        
+        .btn-primary-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6);
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 1400px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        .stat-card {
+            background: rgba(20, 20, 35, 0.6) !important;
+            backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 20px !important;
+            padding: 28px !important;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .stat-card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .stat-card-icon::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            background: inherit;
+            filter: blur(20px);
+            opacity: 0.4;
+            z-index: -1;
+        }
+        
+        .stat-card:nth-child(1) .stat-card-icon {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            --accent-1: #6366f1;
+            --accent-2: #8b5cf6;
+            color: white;
+        }
+        
+        .stat-card:nth-child(2) .stat-card-icon {
+            background: linear-gradient(135deg, #10b981, #059669);
+            --accent-1: #10b981;
+            --accent-2: #059669;
+            color: white;
+        }
+        
+        .stat-card:nth-child(3) .stat-card-icon {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            --accent-1: #f59e0b;
+            --accent-2: #d97706;
+            color: white;
+        }
+        
+        .stat-card:nth-child(4) .stat-card-icon {
+            background: linear-gradient(135deg, #ec4899, #be185d);
+            --accent-1: #ec4899;
+            --accent-2: #be185d;
+            color: white;
+        }
+        
+        .stat-card-label {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-card-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        
+        .stat-card:nth-child(4) .stat-card-value {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-card-trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+        }
+        
+        .stat-card-trend.up { color: #10b981; }
+        .stat-card-trend.down { color: #ef4444; }
+        
+        /* Quick Actions */
+        .quick-actions {
+            background: rgba(20, 20, 35, 0.6) !important;
+            backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 20px !important;
+            padding: 30px !important;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.6s ease-out 0.5s forwards;
+            opacity: 0;
+        }
+        
+        .section-title {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: #6366f1;
+        }
+        
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        
+        @media (max-width: 1200px) {
+            .quick-actions-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        .quick-action-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .quick-action-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: rgba(99, 102, 241, 0.5);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.2);
+        }
+        
+        .quick-action-card:hover::before {
+            opacity: 1;
+        }
+        
+        .quick-action-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(139, 92, 246, 0.2));
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 18px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .quick-action-label {
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Two Column Layout */
+        .two-col-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 1200px) {
+            .two-col-grid { grid-template-columns: 1fr; }
+        }
+        
+        .panel {
+            background: rgba(20, 20, 35, 0.6) !important;
+            backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 20px !important;
+            padding: 25px !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.6s ease-out 0.6s forwards;
+            opacity: 0;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .panel-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .panel-title i {
+            color: #6366f1;
+        }
+        
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        
+        .badge-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .order-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .order-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .order-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .order-info strong {
+            color: white;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .order-info span {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+        }
+        
+        .order-amount {
+            text-align: right;
+        }
+        
+        .order-amount strong {
+            color: #10b981;
+            font-size: 1.1rem;
+        }
+        
+        .order-empty {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(20, 20, 35, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 18px 28px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            display: none;
+            z-index: 9999;
+            animation: slideInRight 0.4s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .toast-success {
+            border-left: 4px solid #10b981;
+        }
+        
+        .toast-error {
+            border-left: 4px solid #ef4444;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(30, 30, 50, 0.8);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed, #db2777);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.7);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">CC</div>
+            <div>
+                <div class="sidebar-logo-text">CodeCraft</div>
+                <div class="sidebar-logo-sub">Admin Panel</div>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="/admin" class="sidebar-link active">
+                <i class="fas fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/employees" class="sidebar-link">
+                <i class="fas fa-users"></i>
+                <span>Employees</span>
+            </a>
+            <a href="/admin/clients" class="sidebar-link">
+                <i class="fas fa-building"></i>
+                <span>Clients</span>
+            </a>
+            <a href="/admin/orders" class="sidebar-link">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Orders</span>
+            </a>
+            <a href="/admin/services" class="sidebar-link">
+                <i class="fas fa-tools"></i>
+                <span>Services</span>
+            </a>
+            <a href="/admin/messages" class="sidebar-link">
+                <i class="fas fa-envelope"></i>
+                <span>Messages</span>
+                <span class="msg-badge" id="msgBadge" style="display:none; margin-left: auto; background: #ff6b6b; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem;">0</span>
+            </a>
+            <a href="/admin/payments" class="sidebar-link">
+                <i class="fas fa-credit-card"></i>
+                <span>Payments</span>
+            </a>
+            <a href="/admin/settings" class="sidebar-link">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+            
+            <div class="sidebar-divider"></div>
+            
+            <a href="/" class="sidebar-link" target="_blank">
+                <i class="fas fa-globe"></i>
+                <span>View Website</span>
+            </a>
+            <button onclick="logout()" class="sidebar-link" style="width: 100%; border: none;">
+                <i class="fas fa-sign-out-alt" style="color: #ff6b6b;"></i>
+                <span style="color: #ff6b6b;">Logout</span>
+            </button>
+        </nav>
+        
+        <div class="sidebar-user">
+            <div class="sidebar-avatar" id="adminAvatar">A</div>
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-name" id="adminName">Admin</div>
+                <div class="sidebar-user-role">Administrator</div>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <p>Developed by M. Ahsan Shah</p>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-title">
+                <h1>Dashboard</h1>
+                <p>Welcome back! Here's your business overview.</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn-glass" onclick="window.location.reload()">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh
+                </button>
+                <button class="btn-primary-gradient" onclick="window.location.href='/admin/employees'">
+                    <i class="fas fa-plus"></i>
+                    Quick Add
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-card-label">Total Employees</div>
+                <div class="stat-card-value" id="statEmployees">0</div>
+                <div class="stat-card-trend up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>Active team</span>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-card-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="stat-card-label">Total Clients</div>
+                <div class="stat-card-value" id="statClients">0</div>
+                <div class="stat-card-trend up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>Growing business</span>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-card-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="stat-card-label">Total Orders</div>
+                <div class="stat-card-value" id="statOrders">0</div>
+                <div class="stat-card-trend up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>Pending: <span id="pendingCount">0</span></span>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-card-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-card-label">Total Revenue</div>
+                <div class="stat-card-value" id="statRevenue">$0</div>
+                <div class="stat-card-trend up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>All time</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h3 class="section-title">
+                <i class="fas fa-bolt"></i>
+                Quick Actions
+            </h3>
+            <div class="quick-actions-grid">
+                <div class="quick-action-card" onclick="window.location.href='/admin/employees'">
+                    <div class="quick-action-icon">👨‍💼</div>
+                    <div class="quick-action-label">Add Employee</div>
+                </div>
+                <div class="quick-action-card" onclick="window.location.href='/admin/clients'">
+                    <div class="quick-action-icon">🏢</div>
+                    <div class="quick-action-label">Add Client</div>
+                </div>
+                <div class="quick-action-card" onclick="window.location.href='/admin/orders'">
+                    <div class="quick-action-icon">📋</div>
+                    <div class="quick-action-label">New Order</div>
+                </div>
+                <div class="quick-action-card" onclick="window.location.href='/admin/settings'">
+                    <div class="quick-action-icon">⚙️</div>
+                    <div class="quick-action-label">Settings</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Two Column Layout -->
+        <div class="two-col-grid">
+            <!-- Pending Orders -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h3 class="panel-title">
+                        <i class="fas fa-clock"></i>
+                        Pending Orders
+                    </h3>
+                    <span class="badge badge-warning" id="pendingBadge">0 Pending</span>
+                </div>
+                <div id="pendingOrders">
+                    <div class="order-empty">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h3 class="panel-title">
+                        <i class="fas fa-history"></i>
+                        Recent Orders
+                    </h3>
+                    <span class="badge badge-success">Live</span>
+                </div>
+                <div id="recentOrders">
+                    <div class="order-empty">Loading...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast toast-success">
+        <span id="toastMsg"></span>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            loadStats();
+        });
+
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/check-auth');
+                const data = await res.json();
+                if (!data.success || data.user.role !== 'admin') {
+                    window.location.href = '/login';
+                }
+                currentUser = data.user;
+                document.getElementById('adminName').textContent = currentUser.first_name || 'Admin';
+                document.getElementById('adminAvatar').textContent = (currentUser.first_name || 'A').charAt(0);
+            } catch (e) {
+                window.location.href = '/login';
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/admin/stats');
+                const data = await res.json();
+                if (data.success) {
+                    animateValue('statEmployees', 0, data.stats.employees, 1000);
+                    animateValue('statClients', 0, data.stats.clients, 1000);
+                    animateValue('statOrders', 0, data.stats.orders, 1000);
+                    animateValue('statRevenue', 0, data.stats.revenue, 1000, '$');
+                    document.getElementById('pendingCount').textContent = data.stats.pending;
+                    document.getElementById('pendingBadge').textContent = data.stats.pending + ' Pending';
+                }
+                
+                // Load orders
+                const ordersRes = await fetch('/api/orders');
+                const ordersData = await ordersRes.json();
+                if (ordersData.success) {
+                    const orders = ordersData.orders;
+                    const pending = orders.filter(o => o.status === 'Pending');
+                    
+                    // Pending orders
+                    if (pending.length === 0) {
+                        document.getElementById('pendingOrders').innerHTML = `
+                            <div class="order-empty">
+                                <i class="fas fa-check-circle" style="font-size: 2rem; color: #10b981; margin-bottom: 10px;"></i>
+                                <p>✓ No pending orders</p>
+                            </div>`;
+                    } else {
+                        document.getElementById('pendingOrders').innerHTML = pending.slice(0, 4).map(o => `
+                            <div class="order-item">
+                                <div class="order-info">
+                                    <strong>${o.service_type}</strong>
+                                    <span>${o.company_name || 'No client'}</span>
+                                </div>
+                                <div class="order-amount">
+                                    <strong>$${parseFloat(o.amount || 0).toLocaleString()}</strong>
+                                    <span class="badge badge-warning" style="display: block; margin-top: 5px;">Pending</span>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                    
+                    // Recent orders
+                    if (orders.length === 0) {
+                        document.getElementById('recentOrders').innerHTML = `
+                            <div class="order-empty">
+                                <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                                <p>No orders yet</p>
+                            </div>`;
+                    } else {
+                        document.getElementById('recentOrders').innerHTML = orders.slice(0, 4).map(o => `
+                            <div class="order-item">
+                                <div class="order-info">
+                                    <strong>${o.service_type}</strong>
+                                    <span>${o.company_name || 'No client'}</span>
+                                </div>
+                                <div class="order-amount">
+                                    <strong>$${parseFloat(o.amount || 0).toLocaleString()}</strong>
+                                    <span class="badge ${o.status === 'Completed' ? 'badge-success' : 'badge-warning'}" style="display: block; margin-top: 5px;">${o.status}</span>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function animateValue(id, start, end, duration, prefix = '') {
+            const el = document.getElementById(id);
+            const range = end - start;
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(start + range * easeOut);
+                
+                if (prefix === '$') {
+                    el.textContent = '$' + current.toLocaleString();
+                } else {
+                    el.textContent = current;
+                }
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+
+        async function logout() {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/login';
+        }
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.className = 'toast toast-' + type;
+            document.getElementById('toastMsg').textContent = msg;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        }
+    </script>
+</body>
+</html>
